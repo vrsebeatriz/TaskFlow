@@ -1,6 +1,6 @@
 # Task Manager Pro
 
-TaskFlow Pro e um monorepo para gerenciamento de tarefas com interface web, API local e uma CLI em Node.js. O projeto foi organizado para demonstrar um fluxo completo de produtividade: cadastro de usuario, criacao de tasks, dashboard com metricas, quadro Kanban e timer Pomodoro.
+TaskFlow Pro é um monorepo para gerenciamento de tarefas com interface web, API local e uma CLI em Node.js. O projeto foi organizado para demonstrar um fluxo completo de produtividade: cadastro de usuario, criacao de tasks, dashboard com metricas, quadro Kanban e timer Pomodoro.
 
 ## Visao Geral
 
