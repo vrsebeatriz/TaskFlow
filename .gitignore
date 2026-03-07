@@ -1,0 +1,10 @@
+node_modules/
+.env
+.DS_Store
+*.log
+dist/
+build/
+.coverage
+.DS_Store
+Thumbs.db
+packages/api/db.json
