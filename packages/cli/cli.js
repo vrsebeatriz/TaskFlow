@@ -6,25 +6,35 @@ import ora from 'ora';
 const API_BASE = 'http://localhost:3001/api';
 const program = new Command();
 
-// Configurar axios
 const api = axios.create({
   baseURL: API_BASE
 });
 
+const getUserId = () => {
+  const rawUserId = program.opts().userId ?? process.env.TASKFLOW_USER_ID ?? '1';
+  const userId = Number(rawUserId);
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    throw new Error('Informe um userId numérico válido com --user-id ou TASKFLOW_USER_ID.');
+  }
+
+  return userId;
+};
+
 program
   .version('1.0.0')
+  .option('-u, --user-id <id>', 'ID do usuário usado nas operações da API', process.env.TASKFLOW_USER_ID || '1')
   .description('Task Manager CLI - Gerencie suas tasks pelo terminal');
 
-// Comando: Listar tasks
 program
   .command('list')
   .description('Listar todas as tasks')
   .option('-s, --status <status>', 'Filtrar por status (pending, completed)')
   .action(async (options) => {
     const spinner = ora('Carregando tasks...').start();
-    
+
     try {
-      const response = await api.get('/tasks');
+      const response = await api.get('/tasks', { params: { userId: getUserId() } });
       let tasks = response.data;
 
       if (options.status) {
@@ -39,11 +49,11 @@ program
       }
 
       console.log('\n' + chalk.blue.bold('📋 Suas Tasks:\n'));
-      
+
       tasks.forEach(task => {
         const statusIcon = task.status === 'completed' ? '✅' : '⏳';
         const statusColor = task.status === 'completed' ? chalk.green : chalk.yellow;
-        
+
         const priorityColors = {
           low: chalk.green,
           medium: chalk.yellow,
@@ -61,11 +71,10 @@ program
 
     } catch (error) {
       spinner.fail('Erro ao carregar tasks');
-      console.log(chalk.red('Certifique-se de que a API está rodando: npm run dev:api'));
+      console.log(chalk.red(error.message || 'Certifique-se de que a API está rodando: npm run dev:api'));
     }
   });
 
-// Comando: Adicionar task
 program
   .command('add <description>')
   .description('Adicionar nova task')
@@ -78,7 +87,8 @@ program
       const response = await api.post('/tasks', {
         description,
         priority: options.priority,
-        dueDate: options.due
+        dueDate: options.due,
+        userId: getUserId()
       });
 
       spinner.succeed('Task adicionada com sucesso!');
@@ -86,11 +96,10 @@ program
 
     } catch (error) {
       spinner.fail('Erro ao adicionar task');
-      console.log(chalk.red('Certifique-se de que a API está rodando'));
+      console.log(chalk.red(error.message || 'Certifique-se de que a API está rodando'));
     }
   });
 
-// Comando: Completar task
 program
   .command('complete <id>')
   .description('Marcar task como concluída')
@@ -98,16 +107,15 @@ program
     const spinner = ora('Completando task...').start();
 
     try {
-      await api.put(`/tasks/${id}/complete`);
+      await api.put(`/tasks/${id}/complete`, { userId: getUserId() });
       spinner.succeed(`Task #${id} marcada como concluída!`);
 
     } catch (error) {
       spinner.fail('Erro ao completar task');
-      console.log(chalk.red('Task não encontrada ou API offline'));
+      console.log(chalk.red(error.message || 'Task não encontrada ou API offline'));
     }
   });
 
-// Comando: Deletar task
 program
   .command('delete <id>')
   .description('Deletar uma task')
@@ -115,16 +123,15 @@ program
     const spinner = ora('Deletando task...').start();
 
     try {
-      await api.delete(`/tasks/${id}`);
+      await api.delete(`/tasks/${id}`, { data: { userId: getUserId() } });
       spinner.succeed(`Task #${id} deletada com sucesso!`);
 
     } catch (error) {
       spinner.fail('Erro ao deletar task');
-      console.log(chalk.red('Task não encontrada ou API offline'));
+      console.log(chalk.red(error.message || 'Task não encontrada ou API offline'));
     }
   });
 
-// Comando: Estatísticas
 program
   .command('stats')
   .description('Mostrar estatísticas')
@@ -132,7 +139,7 @@ program
     const spinner = ora('Carregando estatísticas...').start();
 
     try {
-      const response = await api.get('/stats');
+      const response = await api.get('/stats', { params: { userId: getUserId() } });
       const stats = response.data;
 
       spinner.succeed('Estatísticas carregadas!');
@@ -141,12 +148,11 @@ program
       console.log(`Total: ${chalk.white(stats.total)}`);
       console.log(`Concluídas: ${chalk.green(stats.completed)}`);
       console.log(`Pendentes: ${chalk.yellow(stats.pending)}`);
-      
+
       if (stats.total > 0) {
         const progress = Math.round((stats.completed / stats.total) * 100);
         console.log(`Progresso: ${chalk.cyan(progress + '%')}`);
-        
-        // Barra de progresso simples
+
         const barLength = 20;
         const completedBars = Math.round((stats.completed / stats.total) * barLength);
         const bar = '█'.repeat(completedBars) + '░'.repeat(barLength - completedBars);
@@ -155,11 +161,10 @@ program
 
     } catch (error) {
       spinner.fail('Erro ao carregar estatísticas');
-      console.log(chalk.red('Certifique-se de que a API está rodando'));
+      console.log(chalk.red(error.message || 'Certifique-se de que a API está rodando'));
     }
   });
 
-// Se nenhum comando for fornecido, mostrar ajuda
 if (process.argv.length === 2) {
   program.outputHelp();
 }

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Play, Pause, RotateCcw } from 'lucide-react';
 
 type TimerMode = 'work' | 'break';
@@ -37,7 +37,6 @@ export function PomodoroTimer() {
     return () => clearInterval(interval);
   }, [isRunning, timeLeft, mode, workTimeSeconds, breakTimeSeconds]);
 
-  // Atualizar timer quando as configurações mudarem
   useEffect(() => {
     const newTime = mode === 'work' ? workTimeSeconds : breakTimeSeconds;
     setTimeLeft(newTime);
@@ -80,7 +79,6 @@ export function PomodoroTimer() {
         </button>
       </div>
 
-      {/* Modal de Configurações */}
       {showSettings && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-auto">
@@ -218,7 +216,6 @@ export function PomodoroTimer() {
         </button>
       </div>
 
-      {/* Preview das configurações atuais */}
       <div className="mt-4 p-3 bg-gray-50 rounded-lg">
         <div className="text-xs text-gray-600 text-center">
           Configuração atual: <strong>{settings.workTime}min</strong> trabalho •{' '}

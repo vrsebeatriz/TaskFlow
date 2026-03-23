@@ -1,62 +1,51 @@
-﻿import React from 'react';
-import { TrendingUp, CheckCircle, Clock, List, AlertTriangle } from 'lucide-react';
-
-interface Task {
-  id: number;
-  description: string;
-  priority: string;
-  status: string;
-  dueDate?: string;
-}
+import { TrendingUp, CheckCircle, Clock, List, AlertTriangle } from "lucide-react";
+import type { Task } from "../types";
 
 interface StatsOverviewProps {
   tasks: Task[];
 }
 
 export function StatsOverview({ tasks }: StatsOverviewProps) {
-  // Calcular estatísticas baseadas nas tasks
   const total = tasks.length;
-  const completed = tasks.filter(task => task.status === 'completed').length;
+  const completed = tasks.filter(task => task.status === "completed").length;
   const pending = total - completed;
-  const highPriority = tasks.filter(task => task.priority === 'high').length;
-  
+  const highPriority = tasks.filter(task => task.priority === "high").length;
   const progress = total > 0 ? (completed / total) * 100 : 0;
 
-  // Tasks atrasadas
   const overdueTasks = tasks.filter(task => {
-    if (!task.dueDate || task.status === 'completed') return false;
+    if (!task.dueDate || task.status === "completed") return false;
     return new Date(task.dueDate) < new Date();
   }).length;
 
   const statCards = [
     {
       icon: List,
-      label: 'Total',
+      label: "Total",
       value: total,
-      color: 'text-blue-500 bg-blue-50 dark:bg-blue-900/20',
-      description: 'Tasks totais'
+      color: "text-blue-500 bg-blue-50 dark:bg-blue-900/20",
+      description: "Tasks totais",
     },
     {
       icon: CheckCircle,
-      label: 'Concluídas',
+      label: "Concluídas",
       value: completed,
-      color: 'text-green-500 bg-green-50 dark:bg-green-900/20',
-      description: 'Tasks finalizadas'
+      color: "text-green-500 bg-green-50 dark:bg-green-900/20",
+      description: "Tasks finalizadas",
     },
     {
       icon: Clock,
-      label: 'Pendentes',
+      label: "Pendentes",
       value: pending,
-      color: 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20',
-      description: 'Em andamento'
+      color: "text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20",
+      description: "Em andamento",
     },
     {
       icon: AlertTriangle,
-      label: 'Atrasadas',
+      label: "Atrasadas",
       value: overdueTasks,
-      color: 'text-red-500 bg-red-50 dark:bg-red-900/20',
-      description: 'Fora do prazo'
-    }
+      color: "text-red-500 bg-red-50 dark:bg-red-900/20",
+      description: "Fora do prazo",
+    },
   ];
 
   return (
@@ -66,7 +55,6 @@ export function StatsOverview({ tasks }: StatsOverviewProps) {
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Estatísticas em Tempo Real</h3>
       </div>
 
-      {/* Barra de Progresso Geral */}
       <div className="mb-6">
         <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
           <span>Progresso Geral</span>
@@ -84,7 +72,6 @@ export function StatsOverview({ tasks }: StatsOverviewProps) {
         </div>
       </div>
 
-      {/* Grid de Estatísticas */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((stat, index) => (
           <div key={index} className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
@@ -98,7 +85,6 @@ export function StatsOverview({ tasks }: StatsOverviewProps) {
         ))}
       </div>
 
-      {/* Informações Adicionais */}
       <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="text-center">

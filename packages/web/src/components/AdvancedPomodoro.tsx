@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Play, Pause, RotateCcw, Volume2, VolumeX, Target, Settings } from "lucide-react";
 import Confetti from "react-confetti";
 
@@ -16,11 +16,10 @@ export function AdvancedPomodoro() {
   const [isHoveringSettings, setIsHoveringSettings] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Configurações personalizáveis
   const [settings, setSettings] = useState({
-    focusTime: 25, // minutos
-    shortBreak: 5, // minutos
-    longBreak: 15, // minutos
+    focusTime: 25,
+    shortBreak: 5,
+    longBreak: 15,
     sessionsUntilLongBreak: 4
   });
 
@@ -45,7 +44,6 @@ export function AdvancedPomodoro() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, timeLeft]);
 
-  // Atualizar timer quando as configurações mudarem
   useEffect(() => {
     setTimeLeft(modes[mode].time);
   }, [settings, mode]);
@@ -87,7 +85,7 @@ export function AdvancedPomodoro() {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const progress = 100 - (timeLeft / modes[mode].time) * 100;
@@ -95,15 +93,14 @@ export function AdvancedPomodoro() {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
       {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
-      
+
       <audio ref={audioRef} src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" />
-      
+
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">
           🍅 Pomodoro Timer
         </h3>
         <div className="flex items-center space-x-3">
-          {/* Ícone de Áudio Melhorado */}
           <div className="relative">
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
@@ -111,31 +108,25 @@ export function AdvancedPomodoro() {
               onMouseLeave={() => setIsHoveringSound(false)}
               className={`
                 p-3 rounded-xl transition-all duration-300 transform
-                ${soundEnabled 
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                ${soundEnabled
+                  ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
                 }
-                ${isHoveringSound ? 'scale-110 shadow-lg' : 'scale-100 shadow-sm'}
+                ${isHoveringSound ? "scale-110 shadow-lg" : "scale-100 shadow-sm"}
                 hover:shadow-lg
               `}
             >
-              {soundEnabled ? (
-                <Volume2 className="h-5 w-5" />
-              ) : (
-                <VolumeX className="h-5 w-5" />
-              )}
+              {soundEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
             </button>
-            
-            {/* Tooltip */}
+
             {isHoveringSound && (
               <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg whitespace-nowrap z-10">
-                {soundEnabled ? 'Som ativado' : 'Som desativado'}
+                {soundEnabled ? "Som ativado" : "Som desativado"}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-900 dark:border-b-gray-700"></div>
               </div>
             )}
           </div>
 
-          {/* Ícone de Configurações Melhorado */}
           <div className="relative">
             <button
               onClick={() => setShowSettings(true)}
@@ -144,14 +135,13 @@ export function AdvancedPomodoro() {
               className={`
                 p-3 rounded-xl transition-all duration-300 transform
                 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400
-                ${isHoveringSettings ? 'scale-110 shadow-lg rotate-12' : 'scale-100 shadow-sm rotate-0'}
+                ${isHoveringSettings ? "scale-110 shadow-lg rotate-12" : "scale-100 shadow-sm rotate-0"}
                 hover:shadow-lg
               `}
             >
               <Settings className="h-5 w-5" />
             </button>
-            
-            {/* Tooltip */}
+
             {isHoveringSettings && (
               <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg whitespace-nowrap z-10">
                 Configurações
@@ -160,7 +150,6 @@ export function AdvancedPomodoro() {
             )}
           </div>
 
-          {/* Contador de Sessões */}
           <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl px-3 py-2">
             <Target className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             <span className="text-sm font-bold text-purple-700 dark:text-purple-300">
@@ -170,7 +159,6 @@ export function AdvancedPomodoro() {
         </div>
       </div>
 
-      {/* Modal de Configurações */}
       {showSettings && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full mx-auto shadow-2xl">
@@ -183,7 +171,7 @@ export function AdvancedPomodoro() {
                 ✕
               </button>
             </div>
-            
+
             <div className="space-y-5">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
@@ -204,7 +192,7 @@ export function AdvancedPomodoro() {
                   minutos
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                   🌿 Pausa Curta
@@ -281,7 +269,6 @@ export function AdvancedPomodoro() {
         </div>
       )}
 
-      {/* Timer Circular */}
       <div className="relative mb-8">
         <div className="w-64 h-64 mx-auto rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -307,7 +294,7 @@ export function AdvancedPomodoro() {
             <defs>
               <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 {(() => {
-                  const [fromClass, toClass] = modes[mode].color.split(' ');
+                  const [fromClass, toClass] = modes[mode].color.split(" ");
                   return (
                     <>
                       <stop offset="0%" className={fromClass} />
@@ -323,15 +310,14 @@ export function AdvancedPomodoro() {
               {formatTime(timeLeft)}
             </div>
             {(() => {
-              const [fromClass] = modes[mode].color.split(' ');
-              const labelClass = fromClass.replace('from-', 'text-');
+              const [fromClass] = modes[mode].color.split(" ");
+              const labelClass = fromClass.replace("from-", "text-");
               return <div className={`text-sm font-medium ${labelClass}`}>{modes[mode].label}</div>;
             })()}
           </div>
         </div>
       </div>
 
-      {/* Controls */}
       <div className="flex justify-center space-x-4 mb-6">
         {!isRunning ? (
           <button
@@ -356,7 +342,6 @@ export function AdvancedPomodoro() {
         </button>
       </div>
 
-      {/* Mode Selector - Corrigido (sem scale) */}
       <div className="grid grid-cols-3 gap-2 mb-6">
         {(Object.keys(modes) as ModeKey[]).map(key => {
           const config = modes[key];
@@ -368,7 +353,7 @@ export function AdvancedPomodoro() {
                 py-2 px-1 rounded-xl transition-all duration-200 text-sm font-medium
                 ${mode === key
                   ? `bg-gradient-to-r ${config.color} text-white shadow-lg font-bold`
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
                 }
               `}
             >
@@ -378,7 +363,6 @@ export function AdvancedPomodoro() {
         })}
       </div>
 
-      {/* Session Stats */}
       <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
         <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
           Estatísticas da Sessão
@@ -391,7 +375,7 @@ export function AdvancedPomodoro() {
           <div>
             <span className="text-gray-600 dark:text-gray-400">Tempo Focado:</span>
             <span className="ml-2 font-medium text-gray-900 dark:text-white">
-              {Math.floor(sessions * settings.focusTime / 60)}h {sessions * settings.focusTime % 60}m
+              {Math.floor((sessions * settings.focusTime) / 60)}h {sessions * settings.focusTime % 60}m
             </span>
           </div>
         </div>

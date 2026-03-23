@@ -1,110 +1,130 @@
-﻿import React, { useState, useEffect } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { X, Calendar, Flag, Zap, Clock, Sparkles } from "lucide-react";
+import type { Task, TaskDraft } from "../types";
 
-export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, onUpdate = null }) {
+interface CreateTaskModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAdd: (taskData: TaskDraft) => void | Promise<void>;
+  editingTask?: Task | null;
+  onUpdate?: ((task: Task) => void | Promise<void>) | null;
+}
+
+export function CreateTaskModal({
+  isOpen,
+  onClose,
+  onAdd,
+  editingTask = null,
+  onUpdate = null,
+}: CreateTaskModalProps) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     description: "",
-    priority: "medium",
+    priority: "medium" as TaskDraft["priority"],
     dueDate: "",
-    category: "work"
+    category: "work",
   });
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Reset form quando modal abre ou task de edição muda
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) {
+      setIsAnimating(false);
+      return;
+    }
+
+    const animationFrame = window.requestAnimationFrame(() => {
       setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 500);
-      
-      if (editingTask) {
-        // Modo edição - preencher com dados da task
-        // Suporta tanto 'content' quanto 'description'
-        const taskContent = editingTask.content || editingTask.description || "";
-        setFormData({
-          description: taskContent,
-          priority: editingTask.priority || "medium",
-          dueDate: editingTask.dueDate || "",
-          category: editingTask.category || "work"
-        });
-        setStep(1);
-      } else {
-        // Modo criação - reset form
-        setFormData({ description: "", priority: "medium", dueDate: "", category: "work" });
-        setStep(1);
-      }
-      
-      return () => clearTimeout(timer);
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    if (editingTask) {
+      const taskContent = editingTask.content || editingTask.description || "";
+      setFormData({
+        description: taskContent,
+        priority: editingTask.priority || "medium",
+        dueDate: editingTask.dueDate || "",
+        category: editingTask.category || "work",
+      });
+      setStep(1);
+    } else {
+      setFormData({ description: "", priority: "medium", dueDate: "", category: "work" });
+      setStep(1);
     }
   }, [isOpen, editingTask]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formData.description.trim()) {
-      if (editingTask && onUpdate) {
-        // Modo edição - manter compatibilidade com ambos os nomes
-        const updatedTask = {
-          ...editingTask,
-          content: formData.description, // Para KanbanBoard
-          description: formData.description, // Para outras partes do app
-          priority: formData.priority,
-          dueDate: formData.dueDate,
-          category: formData.category
-        };
-        onUpdate(updatedTask);
-      } else {
-        // Modo criação
-        onAdd({
-          description: formData.description.trim(),
-          priority: formData.priority,
-          dueDate: formData.dueDate || undefined,
-          category: formData.category
-        });
-      }
-      
-      setFormData({ description: "", priority: "medium", dueDate: "", category: "work" });
-      setStep(1);
-      onClose();
+
+    if (!formData.description.trim()) {
+      return;
     }
+
+    if (editingTask && onUpdate) {
+      const updatedTask: Task = {
+        ...editingTask,
+        content: formData.description,
+        description: formData.description,
+        priority: formData.priority,
+        dueDate: formData.dueDate || undefined,
+        category: formData.category,
+      };
+      void onUpdate(updatedTask);
+    } else {
+      void onAdd({
+        description: formData.description.trim(),
+        priority: formData.priority,
+        dueDate: formData.dueDate || undefined,
+        category: formData.category,
+      });
+    }
+
+    setFormData({ description: "", priority: "medium", dueDate: "", category: "work" });
+    setStep(1);
+    onClose();
   };
 
-  // ... (resto do código permanece igual)
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+  const nextStep = () => setStep(prev => prev + 1);
+  const prevStep = () => setStep(prev => prev - 1);
 
   const priorityOptions = [
     { value: "low", label: "Baixa", color: "from-green-400 to-green-500", icon: "🟢" },
     { value: "medium", label: "Média", color: "from-yellow-400 to-yellow-500", icon: "🟡" },
-    { value: "high", label: "Alta", color: "from-red-400 to-red-500", icon: "🔴" }
-  ];
+    { value: "high", label: "Alta", color: "from-red-400 to-red-500", icon: "🔴" },
+  ] as const;
 
   const categoryOptions = [
     { value: "work", label: "💼 Trabalho", color: "from-blue-400 to-blue-500" },
     { value: "personal", label: "🏠 Pessoal", color: "from-purple-400 to-purple-500" },
     { value: "learning", label: "📚 Estudo", color: "from-green-400 to-green-500" },
-    { value: "health", label: "💪 Saúde", color: "from-orange-400 to-orange-500" }
+    { value: "health", label: "💪 Saúde", color: "from-orange-400 to-orange-500" },
   ];
 
-  const isEditMode = !!editingTask;
+  const isEditMode = Boolean(editingTask);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop com blur */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       />
-      
-      {/* Modal */}
-      <div className={`
-        relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl 
-        max-w-md w-full transform transition-all duration-500
-        ${isAnimating ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}
-        border border-gray-200 dark:border-gray-700
-      `}>
-        {/* Header */}
+
+      <div
+        className={`
+          relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl
+          max-w-md w-full transform transition-all duration-500
+          ${isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0"}
+          border border-gray-200 dark:border-gray-700
+        `}
+      >
         <div className="relative p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -115,9 +135,7 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                   {isEditMode ? "Editar Task" : "Nova Task"}
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Passo {step} de 3
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Passo {step} de 3</p>
               </div>
             </div>
             <button
@@ -128,10 +146,9 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
             </button>
           </div>
 
-          {/* Progress Bar */}
           <div className="mt-4">
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div 
+              <div
                 className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${(step / 3) * 100}%` }}
               />
@@ -139,9 +156,7 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
           </div>
         </div>
 
-        {/* Conteúdo do Form */}
         <form onSubmit={handleSubmit} className="p-6">
-          {/* Passo 1: Descrição */}
           {step === 1 && (
             <div className="space-y-6 animate-fade-in">
               <div>
@@ -150,7 +165,7 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
                 </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Descreva sua task de forma clara e objetiva..."
                   rows={4}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
@@ -158,7 +173,7 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
                   autoFocus
                 />
               </div>
-              
+
               <button
                 type="button"
                 onClick={nextStep}
@@ -170,7 +185,6 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
             </div>
           )}
 
-          {/* Passo 2: Prioridade e Categoria */}
           {step === 2 && (
             <div className="space-y-6 animate-fade-in">
               <div>
@@ -179,16 +193,17 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
                   Prioridade
                 </label>
                 <div className="grid grid-cols-3 gap-3">
-                  {priorityOptions.map((option) => (
+                  {priorityOptions.map(option => (
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => setFormData({...formData, priority: option.value})}
+                      onClick={() => setFormData({ ...formData, priority: option.value })}
                       className={`
                         p-3 rounded-xl border-2 transition-all duration-200 transform hover:scale-105
-                        ${formData.priority === option.value 
-                          ? `border-transparent bg-gradient-to-r ${option.color} text-white shadow-lg` 
-                          : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-500'
+                        ${
+                          formData.priority === option.value
+                            ? `border-transparent bg-gradient-to-r ${option.color} text-white shadow-lg`
+                            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-500"
                         }
                       `}
                     >
@@ -207,16 +222,17 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
                   Categoria
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {categoryOptions.map((option) => (
+                  {categoryOptions.map(option => (
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => setFormData({...formData, category: option.value})}
+                      onClick={() => setFormData({ ...formData, category: option.value })}
                       className={`
                         p-3 rounded-xl border-2 transition-all duration-200 transform hover:scale-105
-                        ${formData.category === option.value 
-                          ? `border-transparent bg-gradient-to-r ${option.color} text-white shadow-lg` 
-                          : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-500'
+                        ${
+                          formData.category === option.value
+                            ? `border-transparent bg-gradient-to-r ${option.color} text-white shadow-lg`
+                            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-500"
                         }
                       `}
                     >
@@ -247,7 +263,6 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
             </div>
           )}
 
-          {/* Passo 3: Data e Finalização */}
           {step === 3 && (
             <div className="space-y-6 animate-fade-in">
               <div>
@@ -260,41 +275,45 @@ export function CreateTaskModal({ isOpen, onClose, onAdd, editingTask = null, on
                   <input
                     type="date"
                     value={formData.dueDate}
-                    onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
+                    onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
 
-              {/* Preview da Task */}
               <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Preview da Task
-                </h4>
-                <p className="text-gray-700 dark:text-gray-300 text-sm">
-                  {formData.description}
-                </p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Preview da Task</h4>
+                <p className="text-gray-700 dark:text-gray-300 text-sm">{formData.description}</p>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    formData.priority === "high" ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" :
-                    formData.priority === "medium" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" :
-                    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-                  }`}>
+                  <span
+                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      formData.priority === "high"
+                        ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                        : formData.priority === "medium"
+                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                        : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                    }`}
+                  >
                     {formData.priority === "high" ? "Alta" : formData.priority === "medium" ? "Média" : "Baixa"}
                   </span>
                   {formData.category && (
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      formData.category === "work" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" :
-                      formData.category === "personal" ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" :
-                      formData.category === "learning" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" :
-                      "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
-                    }`}>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        formData.category === "work"
+                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                          : formData.category === "personal"
+                          ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
+                          : formData.category === "learning"
+                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                          : "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
+                      }`}
+                    >
                       {categoryOptions.find(cat => cat.value === formData.category)?.label || formData.category}
                     </span>
                   )}
                   {formData.dueDate && (
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                      {new Date(formData.dueDate).toLocaleDateString('pt-BR')}
+                      {new Date(formData.dueDate).toLocaleDateString("pt-BR")}
                     </span>
                   )}
                 </div>

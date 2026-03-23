@@ -1,151 +1,165 @@
 // src/services/api.js
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_OFFLINE_MESSAGE = 'API offline. Inicie `npm run dev:api` para carregar as tasks.';
 
-// Função para obter o userId do localStorage
+const getStoredUser = () => {
+  const savedUser = localStorage.getItem('user');
+
+  if (!savedUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(savedUser);
+  } catch {
+    localStorage.removeItem('user');
+    return null;
+  }
+};
+
+// FunÃ§Ã£o para obter o userId do localStorage
 const getCurrentUserId = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = getStoredUser();
   return user?.id;
+};
+
+const request = async (path, options = {}, fallbackMessage = 'Erro na requisição') => {
+  try {
+    const response = await fetch(`${API_BASE}${path}`, options);
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') ? await response.json() : null;
+
+    if (!response.ok) {
+      throw new Error(data?.error || fallbackMessage);
+    }
+
+    return data;
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(API_OFFLINE_MESSAGE);
+    }
+
+    throw error;
+  }
 };
 
 // Tasks Service
 export const tasksService = {
-  // Buscar tasks do usuário atual
+  // Buscar tasks do usuÃ¡rio atual
   getAllTasks: async () => {
     const userId = getCurrentUserId();
-    if (!userId) throw new Error('Usuário não autenticado');
-    
-    const response = await fetch(`${API_BASE}/tasks?userId=${userId}`);
-    if (!response.ok) throw new Error('Erro ao buscar tasks');
-    return await response.json();
+    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
+
+    return request(`/tasks?userId=${userId}`, {}, 'Erro ao buscar tasks');
   },
 
-  // Criar task para o usuário atual
+  // Criar task para o usuÃ¡rio atual
   createTask: async (taskData) => {
     const userId = getCurrentUserId();
-    if (!userId) throw new Error('Usuário não autenticado');
+    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
 
-    const response = await fetch(`${API_BASE}/tasks`, {
+    return request('/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         ...taskData,
-        userId: userId
+        userId,
       }),
-    });
-    if (!response.ok) throw new Error('Erro ao criar task');
-    return await response.json();
+    }, 'Erro ao criar task');
   },
 
-  // Atualizar task (apenas do usuário atual)
+  // Atualizar task (apenas do usuÃ¡rio atual)
   updateTask: async (taskId, updates) => {
     const userId = getCurrentUserId();
-    if (!userId) throw new Error('Usuário não autenticado');
+    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
 
-    const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
+    return request(`/tasks/${taskId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         ...updates,
-        userId: userId
+        userId,
       }),
-    });
-    if (!response.ok) throw new Error('Erro ao atualizar task');
-    return await response.json();
+    }, 'Erro ao atualizar task');
   },
 
   // Marcar task como completa
   completeTask: async (taskId) => {
     const userId = getCurrentUserId();
-    if (!userId) throw new Error('Usuário não autenticado');
+    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
 
-    const response = await fetch(`${API_BASE}/tasks/${taskId}/complete`, {
+    return request(`/tasks/${taskId}/complete`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ userId }),
-    });
-    if (!response.ok) throw new Error('Erro ao completar task');
-    return await response.json();
+    }, 'Erro ao completar task');
   },
 
-  // Deletar task (apenas do usuário atual)
+  // Deletar task (apenas do usuÃ¡rio atual)
   deleteTask: async (taskId) => {
     const userId = getCurrentUserId();
-    if (!userId) throw new Error('Usuário não autenticado');
+    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
 
-    const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
+    return request(`/tasks/${taskId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ userId }),
-    });
-    if (!response.ok) throw new Error('Erro ao deletar task');
-    return await response.json();
+    }, 'Erro ao deletar task');
   },
 
-  // Buscar estatísticas do usuário atual
+  // Buscar estatÃ­sticas do usuÃ¡rio atual
   getStats: async () => {
     const userId = getCurrentUserId();
-    if (!userId) throw new Error('Usuário não autenticado');
+    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
 
-    const response = await fetch(`${API_BASE}/stats?userId=${userId}`);
-    if (!response.ok) throw new Error('Erro ao buscar estatísticas');
-    return await response.json();
+    return request(`/stats?userId=${userId}`, {}, 'Erro ao buscar estatÃ­sticas');
   },
 
-  // Calcular eficiência do usuário atual
+  // Calcular eficiÃªncia do usuÃ¡rio atual
   getEfficiency: async () => {
     const userId = getCurrentUserId();
-    if (!userId) throw new Error('Usuário não autenticado');
+    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
 
-    const response = await fetch(`${API_BASE}/efficiency?userId=${userId}`);
-    if (!response.ok) throw new Error('Erro ao calcular eficiência');
-    return await response.json();
+    return request(`/efficiency?userId=${userId}`, {}, 'Erro ao calcular eficiÃªncia');
   }
 };
 
 // Auth Service
 export const authService = {
-  // Registrar usuário
+  // Registrar usuÃ¡rio
   register: async (userData) => {
-    const response = await fetch(`${API_BASE}/auth/register`, {
+    return request('/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(userData),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error);
-    return data;
+    }, 'Erro ao cadastrar usuário');
   },
 
   // Login
   login: async (credentials) => {
-    const response = await fetch(`${API_BASE}/auth/login`, {
+    return request('/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(credentials),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error);
-    return data;
+    }, 'Erro ao fazer login');
   },
 
-  // Verificar usuário atual
+  // Verificar usuÃ¡rio atual
   getCurrentUser: async () => {
-    const response = await fetch(`${API_BASE}/auth/me`);
-    if (!response.ok) throw new Error('Erro ao verificar usuário');
-    return await response.json();
+    return request('/auth/me', {}, 'Erro ao verificar usuÃ¡rio');
   },
 
   // Logout (frontend apenas)
@@ -157,19 +171,21 @@ export const authService = {
 
 // Health check
 export const healthCheck = async () => {
-  const response = await fetch(`${API_BASE}/health`);
-  return await response.json();
+  return request('/health', {}, 'Erro ao verificar a API');
 };
 
-// Função utilitária para verificar conexão com a API
+// FunÃ§Ã£o utilitÃ¡ria para verificar conexÃ£o com a API
 export const checkApiConnection = async () => {
   try {
     const health = await healthCheck();
     return { connected: true, data: health };
   } catch (error) {
-    return { connected: false, error: error.message };
+    return {
+      connected: false,
+      error: error instanceof Error ? error.message : 'Erro desconhecido'
+    };
   }
 };
 
-// Função para simular delay (para testes)
+// FunÃ§Ã£o para simular delay (para testes)
 export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
