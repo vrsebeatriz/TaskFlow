@@ -1,8 +1,29 @@
-import { useState, useEffect, useRef } from "react";
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Target, Settings } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  Target,
+  Settings,
+  Brain,
+  Coffee,
+  TimerReset,
+  X,
+} from "lucide-react";
 import Confetti from "react-confetti";
 
 type ModeKey = "focus" | "short" | "long";
+
+type PomodoroSettings = {
+  focusTime: number;
+  shortBreak: number;
+  longBreak: number;
+  sessionsUntilLongBreak: number;
+};
+
+const RING_CIRCUMFERENCE = 2 * Math.PI * 45;
 
 export function AdvancedPomodoro() {
   const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
@@ -12,36 +33,72 @@ export function AdvancedPomodoro() {
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [showSettings, setShowSettings] = useState<boolean>(false);
-  const [isHoveringSound, setIsHoveringSound] = useState<boolean>(false);
-  const [isHoveringSettings, setIsHoveringSettings] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<PomodoroSettings>({
     focusTime: 25,
     shortBreak: 5,
     longBreak: 15,
-    sessionsUntilLongBreak: 4
+    sessionsUntilLongBreak: 4,
   });
 
-  const modes: Record<ModeKey, { time: number; color: string; label: string }> = {
-    focus: { time: settings.focusTime * 60, color: "from-red-400 to-red-500", label: "Foco" },
-    short: { time: settings.shortBreak * 60, color: "from-green-400 to-green-500", label: "Pausa Curta" },
-    long: { time: settings.longBreak * 60, color: "from-blue-400 to-blue-500", label: "Pausa Longa" }
+  const modes: Record<
+    ModeKey,
+    {
+      time: number;
+      label: string;
+      description: string;
+      chipClassName: string;
+      panelClassName: string;
+      strokeFrom: string;
+      strokeTo: string;
+    }
+  > = {
+    focus: {
+      time: settings.focusTime * 60,
+      label: "Foco",
+      description: "Bloco profundo para executar sem interrupções.",
+      chipClassName: "from-cyan-500 to-blue-500 text-white shadow-[0_18px_40px_rgba(34,211,238,0.22)]",
+      panelClassName: "border-cyan-500/20 bg-cyan-500/[0.08]",
+      strokeFrom: "#22d3ee",
+      strokeTo: "#3b82f6",
+    },
+    short: {
+      time: settings.shortBreak * 60,
+      label: "Pausa Curta",
+      description: "Recupere energia antes de voltar para a próxima entrega.",
+      chipClassName: "from-emerald-500 to-teal-500 text-white shadow-[0_18px_40px_rgba(16,185,129,0.22)]",
+      panelClassName: "border-emerald-500/20 bg-emerald-500/[0.08]",
+      strokeFrom: "#34d399",
+      strokeTo: "#14b8a6",
+    },
+    long: {
+      time: settings.longBreak * 60,
+      label: "Pausa Longa",
+      description: "Desacelere um pouco mais para manter consistência ao longo do dia.",
+      chipClassName: "from-fuchsia-500 to-purple-500 text-white shadow-[0_18px_40px_rgba(168,85,247,0.22)]",
+      panelClassName: "border-fuchsia-500/20 bg-fuchsia-500/[0.08]",
+      strokeFrom: "#d946ef",
+      strokeTo: "#8b5cf6",
+    },
   };
 
   useEffect(() => {
     let interval: number | undefined;
+
     if (isRunning && timeLeft > 0) {
       interval = window.setInterval(() => {
-        setTimeLeft(time => time - 1);
+        setTimeLeft(currentTime => currentTime - 1);
       }, 1000);
     } else if (isRunning && timeLeft === 0) {
       handleTimerComplete();
     }
+
     return () => {
-      if (interval) window.clearInterval(interval);
+      if (interval) {
+        window.clearInterval(interval);
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, timeLeft]);
 
   useEffect(() => {
@@ -50,27 +107,37 @@ export function AdvancedPomodoro() {
 
   const handleTimerComplete = () => {
     setIsRunning(false);
+
     if (soundEnabled && audioRef.current) {
-      void audioRef.current.play();
+      void audioRef.current.play().catch(() => {});
     }
 
     if (mode === "focus") {
-      const nextSessions = sessions + 1;
-      setSessions(nextSessions);
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 5000);
+      setSessions(currentSessions => {
+        const nextSessions = currentSessions + 1;
+        const nextMode: ModeKey =
+          nextSessions > 0 && nextSessions % settings.sessionsUntilLongBreak === 0
+            ? "long"
+            : "short";
 
-      const nextMode: ModeKey = nextSessions > 0 && nextSessions % settings.sessionsUntilLongBreak === 0 ? "long" : "short";
-      setMode(nextMode);
-      setTimeLeft(modes[nextMode].time);
-    } else {
-      setMode("focus");
-      setTimeLeft(modes.focus.time);
+        setMode(nextMode);
+        setTimeLeft(modes[nextMode].time);
+        return nextSessions;
+      });
+
+      setShowConfetti(true);
+      window.setTimeout(() => setShowConfetti(false), 4200);
+      return;
     }
+
+    setMode("focus");
+    setTimeLeft(modes.focus.time);
   };
 
   const startTimer = () => setIsRunning(true);
+
   const pauseTimer = () => setIsRunning(false);
+
   const resetTimer = () => {
     setIsRunning(false);
     setTimeLeft(modes[mode].time);
@@ -85,304 +152,439 @@ export function AdvancedPomodoro() {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
+
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const progress = 100 - (timeLeft / modes[mode].time) * 100;
+  const progressRatio = modes[mode].time === 0 ? 0 : 1 - timeLeft / modes[mode].time;
+  const progressOffset = RING_CIRCUMFERENCE * (1 - progressRatio);
+  const totalFocusedMinutes = sessions * settings.focusTime;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-      {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
+    <div className="w-full">
+      {showConfetti && <Confetti recycle={false} numberOfPieces={180} />}
 
-      <audio ref={audioRef} src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" />
+      <audio
+        ref={audioRef}
+        src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"
+      />
 
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-          🍅 Pomodoro Timer
-        </h3>
-        <div className="flex items-center space-x-3">
-          <div className="relative">
-            <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              onMouseEnter={() => setIsHoveringSound(true)}
-              onMouseLeave={() => setIsHoveringSound(false)}
-              className={`
-                p-3 rounded-xl transition-all duration-300 transform
-                ${soundEnabled
-                  ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-                }
-                ${isHoveringSound ? "scale-110 shadow-lg" : "scale-100 shadow-sm"}
-                hover:shadow-lg
-              `}
-            >
-              {soundEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
-            </button>
-
-            {isHoveringSound && (
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg whitespace-nowrap z-10">
-                {soundEnabled ? "Som ativado" : "Som desativado"}
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-900 dark:border-b-gray-700"></div>
+      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
+        <section className="glass-panel overflow-hidden border-white/10">
+          <div className="border-b border-white/5 bg-white/[0.02] p-6 md:p-8">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 shadow-[0_18px_35px_rgba(34,211,238,0.22)]">
+                    <Target className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
+                      Focus System
+                    </p>
+                    <h3 className="text-2xl font-black tracking-tight text-slate-50">
+                      Pomodoro
+                    </h3>
+                  </div>
+                </div>
+                <p className="max-w-2xl text-sm leading-6 text-slate-400">
+                  O relógio Pomodoro ajuda a organizar blocos de foco com pausas estratégicas,
+                  melhorando a concentração e evitando desgaste ao longo do trabalho.
+                </p>
               </div>
-            )}
-          </div>
 
-          <div className="relative">
-            <button
-              onClick={() => setShowSettings(true)}
-              onMouseEnter={() => setIsHoveringSettings(true)}
-              onMouseLeave={() => setIsHoveringSettings(false)}
-              className={`
-                p-3 rounded-xl transition-all duration-300 transform
-                bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400
-                ${isHoveringSettings ? "scale-110 shadow-lg rotate-12" : "scale-100 shadow-sm rotate-0"}
-                hover:shadow-lg
-              `}
-            >
-              <Settings className="h-5 w-5" />
-            </button>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSoundEnabled(current => !current)}
+                  className={`rounded-2xl border px-4 py-3 transition-all duration-200 ${
+                    soundEnabled
+                      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
+                      : "border-white/10 bg-white/5 text-slate-400 hover:bg-white/10"
+                  }`}
+                >
+                  <span className="flex items-center gap-2 text-sm font-semibold">
+                    {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                    {soundEnabled ? "Som Ativo" : "Som Off"}
+                  </span>
+                </button>
 
-            {isHoveringSettings && (
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg whitespace-nowrap z-10">
-                Configurações
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-900 dark:border-b-gray-700"></div>
+                <button
+                  type="button"
+                  onClick={() => setShowSettings(true)}
+                  className="rounded-2xl border border-cyan-400/25 bg-cyan-500/10 px-4 py-3 text-cyan-300 transition-all duration-200 hover:bg-cyan-500/15"
+                >
+                  <span className="flex items-center gap-2 text-sm font-semibold">
+                    <Settings className="h-4 w-4" />
+                    Ajustar Ciclos
+                  </span>
+                </button>
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-fuchsia-500/15 text-fuchsia-300">
+                      <Brain className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                        Sessões
+                      </p>
+                      <p className="text-base font-bold text-slate-100">{sessions}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
           </div>
 
-          <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl px-3 py-2">
-            <Target className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-            <span className="text-sm font-bold text-purple-700 dark:text-purple-300">
-              {sessions}
-            </span>
+          <div className="grid gap-8 p-6 md:p-8 xl:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] xl:items-center">
+            <div className="min-w-0 space-y-6">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-2 min-[1800px]:grid-cols-3">
+                {(Object.keys(modes) as ModeKey[]).map(key => {
+                  const currentMode = modes[key];
+                  const isActive = mode === key;
+
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => switchMode(key)}
+                      className={[
+                        "min-h-[138px] rounded-2xl border px-4 py-4 text-left transition-all duration-200",
+                        isActive
+                          ? `bg-gradient-to-r ${currentMode.chipClassName}`
+                          : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/20 hover:bg-white/[0.06]",
+                      ].join(" ")}
+                    >
+                      <div className="flex h-full flex-col justify-between gap-3">
+                        <p className="text-sm font-bold">{currentMode.label}</p>
+                        <p
+                          className={`text-xs leading-5 ${
+                            isActive ? "text-white/85" : "text-slate-500"
+                          }`}
+                        >
+                          {currentMode.description}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className={`rounded-[28px] border p-5 md:p-6 ${modes[mode].panelClassName}`}>
+                <div className="grid gap-4 min-[1700px]:grid-cols-[minmax(0,1fr)_240px] min-[1700px]:items-start">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                      Estado Atual
+                    </p>
+                    <h4 className="mt-2 text-2xl font-bold text-slate-50">{modes[mode].label}</h4>
+                    <p className="mt-1 text-sm text-slate-400">{modes[mode].description}</p>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-slate-950/35 px-4 py-3 min-[1700px]:self-start">
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                      Próxima troca
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-200">
+                      {mode === "focus"
+                        ? `após ${settings.sessionsUntilLongBreak} blocos, pausa longa`
+                        : "volta automaticamente para foco"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {!isRunning ? (
+                  <button
+                    type="button"
+                    onClick={startTimer}
+                    className="inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-4 text-sm font-bold text-white shadow-[0_18px_36px_rgba(16,185,129,0.25)] transition-all duration-200 hover:scale-[1.02]"
+                  >
+                    <Play className="h-5 w-5" />
+                    Iniciar ciclo
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={pauseTimer}
+                    className="inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-4 text-sm font-bold text-slate-950 shadow-[0_18px_36px_rgba(245,158,11,0.24)] transition-all duration-200 hover:scale-[1.02]"
+                  >
+                    <Pause className="h-5 w-5" />
+                    Pausar ciclo
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={resetTimer}
+                  className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-4 text-sm font-bold text-slate-200 transition-all duration-200 hover:border-white/20 hover:bg-white/[0.08]"
+                >
+                  <RotateCcw className="h-5 w-5" />
+                  Reiniciar
+                </button>
+              </div>
+            </div>
+
+            <div className="relative mx-auto flex w-full max-w-[320px] items-center justify-center xl:max-w-[300px] 2xl:max-w-[320px]">
+              <div className="absolute inset-8 rounded-full bg-cyan-500/10 blur-3xl" />
+              <div className="relative flex h-[260px] w-[260px] items-center justify-center rounded-full border border-white/10 bg-slate-950/45 shadow-[0_24px_60px_rgba(2,6,23,0.38)] sm:h-[290px] sm:w-[290px]">
+                <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
+                  <defs>
+                    <linearGradient id="pomodoro-ring" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor={modes[mode].strokeFrom} />
+                      <stop offset="100%" stopColor={modes[mode].strokeTo} />
+                    </linearGradient>
+                  </defs>
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    fill="none"
+                    stroke="rgba(148,163,184,0.16)"
+                    strokeWidth="6"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    fill="none"
+                    stroke="url(#pomodoro-ring)"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    strokeDasharray={RING_CIRCUMFERENCE}
+                    strokeDashoffset={progressOffset}
+                    className="transition-[stroke-dashoffset] duration-700 ease-out"
+                  />
+                </svg>
+
+                <div className="relative z-10 flex w-[78%] flex-col items-center rounded-full border border-white/10 bg-slate-950/55 px-4 py-8 text-center backdrop-blur-xl sm:px-6 sm:py-10">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500">
+                    Timer
+                  </p>
+                  <div className="mt-4 text-4xl font-black tracking-tight text-slate-50 sm:text-5xl">
+                    {formatTime(timeLeft)}
+                  </div>
+                  <div className="mt-3 text-sm font-semibold text-slate-300">
+                    {isRunning ? "Rodando agora" : "Pronto para começar"}
+                  </div>
+                  <div className="mt-2 text-xs text-slate-500">
+                    {mode === "focus"
+                      ? "Foco profundo"
+                      : mode === "short"
+                      ? "Respire e retorne"
+                      : "Recarga estendida"}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <aside className="grid gap-6 xl:grid-cols-2 2xl:grid-cols-1">
+          <div className="glass-panel border-white/10 p-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-fuchsia-500/15 text-fuchsia-300">
+                <TimerReset className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Ritmo do dia
+                </p>
+                <h4 className="text-lg font-bold text-slate-50">Métricas da sessão</h4>
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-3">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="text-sm text-slate-400">Blocos concluídos</p>
+                <p className="mt-2 text-3xl font-black text-slate-50">{sessions}</p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="text-sm text-slate-400">Tempo focado</p>
+                <p className="mt-2 text-2xl font-bold text-slate-50">
+                  {Math.floor(totalFocusedMinutes / 60)}h {totalFocusedMinutes % 60}m
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="text-sm text-slate-400">Ciclo atual</p>
+                <p className="mt-2 text-xl font-bold text-slate-50">{modes[mode].label}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-panel border-white/10 p-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300">
+                <Coffee className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Configuração ativa
+                </p>
+                <h4 className="text-lg font-bold text-slate-50">Seu setup atual</h4>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-3">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Foco</p>
+                <p className="mt-1 text-lg font-bold text-slate-100">{settings.focusTime} min</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Pausa curta</p>
+                <p className="mt-1 text-lg font-bold text-slate-100">{settings.shortBreak} min</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Pausa longa</p>
+                <p className="mt-1 text-lg font-bold text-slate-100">{settings.longBreak} min</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
+                  Longa a cada
+                </p>
+                <p className="mt-1 text-lg font-bold text-slate-100">
+                  {settings.sessionsUntilLongBreak} sessões
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
 
       {showSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full mx-auto shadow-2xl">
-            <div className="flex justify-between items-center mb-6">
-              <h4 className="text-lg font-bold text-gray-900 dark:text-white">⚙️ Configurações</h4>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowSettings(false)}
+          />
+          <div className="glass-panel relative z-10 w-full max-w-lg border-cyan-500/20 shadow-[0_0_60px_rgba(34,211,238,0.12)]">
+            <div className="flex items-center justify-between border-b border-white/5 bg-white/[0.02] p-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 text-white">
+                  <Settings className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    Personalização
+                  </p>
+                  <h4 className="text-lg font-bold text-slate-50">Configurações do Timer</h4>
+                </div>
+              </div>
+
               <button
+                type="button"
                 onClick={() => setShowSettings(false)}
-                className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="rounded-full p-2 text-slate-500 transition-colors hover:bg-white/5 hover:text-white"
               >
-                ✕
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                  🎯 Tempo de Foco
-                </label>
+            <div className="grid gap-5 p-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-300">Tempo de foco</label>
                 <input
                   type="number"
                   min="1"
                   max="60"
                   value={settings.focusTime}
-                  onChange={(e) => setSettings(prev => ({
-                    ...prev,
-                    focusTime: Math.max(1, Math.min(60, parseInt(e.target.value) || 25))
-                  }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center font-semibold"
+                  onChange={event =>
+                    setSettings(current => ({
+                      ...current,
+                      focusTime: Math.max(1, Math.min(60, parseInt(event.target.value, 10) || 25)),
+                    }))
+                  }
+                  className="w-full"
                 />
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                  minutos
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-300">Pausa curta</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="30"
+                    value={settings.shortBreak}
+                    onChange={event =>
+                      setSettings(current => ({
+                        ...current,
+                        shortBreak: Math.max(
+                          1,
+                          Math.min(30, parseInt(event.target.value, 10) || 5)
+                        ),
+                      }))
+                    }
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-300">Pausa longa</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="60"
+                    value={settings.longBreak}
+                    onChange={event =>
+                      setSettings(current => ({
+                        ...current,
+                        longBreak: Math.max(
+                          1,
+                          Math.min(60, parseInt(event.target.value, 10) || 15)
+                        ),
+                      }))
+                    }
+                    className="w-full"
+                  />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                  🌿 Pausa Curta
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="30"
-                  value={settings.shortBreak}
-                  onChange={(e) => setSettings(prev => ({
-                    ...prev,
-                    shortBreak: Math.max(1, Math.min(30, parseInt(e.target.value) || 5))
-                  }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center font-semibold"
-                />
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                  minutos
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                  🌊 Pausa Longa
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="60"
-                  value={settings.longBreak}
-                  onChange={(e) => setSettings(prev => ({
-                    ...prev,
-                    longBreak: Math.max(1, Math.min(60, parseInt(e.target.value) || 15))
-                  }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center font-semibold"
-                />
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                  minutos
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                  🔄 Sessões até Pausa Longa
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-300">
+                  Sessões até a pausa longa
                 </label>
                 <input
                   type="number"
                   min="1"
                   max="10"
                   value={settings.sessionsUntilLongBreak}
-                  onChange={(e) => setSettings(prev => ({
-                    ...prev,
-                    sessionsUntilLongBreak: Math.max(1, Math.min(10, parseInt(e.target.value) || 4))
-                  }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center font-semibold"
+                  onChange={event =>
+                    setSettings(current => ({
+                      ...current,
+                      sessionsUntilLongBreak: Math.max(
+                        1,
+                        Math.min(10, parseInt(event.target.value, 10) || 4)
+                      ),
+                    }))
+                  }
+                  className="w-full"
                 />
               </div>
-            </div>
 
-            <div className="flex space-x-3 mt-8">
-              <button
-                onClick={() => setShowSettings(false)}
-                className="flex-1 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => setShowSettings(false)}
-                className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 font-semibold shadow-lg"
-              >
-                Aplicar
-              </button>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSettings(false)}
+                  className="btn-secondary flex-1"
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowSettings(false)}
+                  className="btn-primary flex-1"
+                >
+                  Aplicar
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-
-      <div className="relative mb-8">
-        <div className="w-64 h-64 mx-auto rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              className="text-gray-200 dark:text-gray-600"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              fill="none"
-              stroke="url(#gradient)"
-              strokeWidth="3"
-              strokeDasharray={`${progress * 2.827} 282.7`}
-              className="transition-all duration-1000 ease-out"
-            />
-            <defs>
-              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                {(() => {
-                  const [fromClass, toClass] = modes[mode].color.split(" ");
-                  return (
-                    <>
-                      <stop offset="0%" className={fromClass} />
-                      <stop offset="100%" className={toClass} />
-                    </>
-                  );
-                })()}
-              </linearGradient>
-            </defs>
-          </svg>
-          <div className="absolute text-center">
-            <div className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-              {formatTime(timeLeft)}
-            </div>
-            {(() => {
-              const [fromClass] = modes[mode].color.split(" ");
-              const labelClass = fromClass.replace("from-", "text-");
-              return <div className={`text-sm font-medium ${labelClass}`}>{modes[mode].label}</div>;
-            })()}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-center space-x-4 mb-6">
-        {!isRunning ? (
-          <button
-            onClick={startTimer}
-            className="bg-gradient-to-r from-green-400 to-green-500 text-white p-4 rounded-full hover:from-green-500 hover:to-green-600 transition-all duration-200 transform hover:scale-110 shadow-lg"
-          >
-            <Play className="h-6 w-6" />
-          </button>
-        ) : (
-          <button
-            onClick={pauseTimer}
-            className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white p-4 rounded-full hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 transform hover:scale-110 shadow-lg"
-          >
-            <Pause className="h-6 w-6" />
-          </button>
-        )}
-        <button
-          onClick={resetTimer}
-          className="bg-gradient-to-r from-gray-400 to-gray-500 text-white p-4 rounded-full hover:from-gray-500 hover:to-gray-600 transition-all duration-200 transform hover:scale-110"
-        >
-          <RotateCcw className="h-6 w-6" />
-        </button>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2 mb-6">
-        {(Object.keys(modes) as ModeKey[]).map(key => {
-          const config = modes[key];
-          return (
-            <button
-              key={key}
-              onClick={() => switchMode(key)}
-              className={`
-                py-2 px-1 rounded-xl transition-all duration-200 text-sm font-medium
-                ${mode === key
-                  ? `bg-gradient-to-r ${config.color} text-white shadow-lg font-bold`
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
-                }
-              `}
-            >
-              {config.label}
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-          Estatísticas da Sessão
-        </h4>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600 dark:text-gray-400">Sessões:</span>
-            <span className="ml-2 font-medium text-gray-900 dark:text-white">{sessions}</span>
-          </div>
-          <div>
-            <span className="text-gray-600 dark:text-gray-400">Tempo Focado:</span>
-            <span className="ml-2 font-medium text-gray-900 dark:text-white">
-              {Math.floor((sessions * settings.focusTime) / 60)}h {sessions * settings.focusTime % 60}m
-            </span>
-          </div>
-        </div>
-        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          ⚙️ Configuração: {settings.focusTime}min foco • {settings.shortBreak}min pausa curta • {settings.longBreak}min pausa longa
-        </div>
-      </div>
     </div>
   );
 }

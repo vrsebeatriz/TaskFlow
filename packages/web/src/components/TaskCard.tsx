@@ -1,146 +1,70 @@
-import { useState } from "react";
-import { Check, Trash2, Flag, Edit3, Calendar, Star } from "lucide-react";
-import type { Task } from "../types";
+import { memo } from 'react';
+import { Calendar, Tag, ChevronRight } from 'lucide-react';
+import { Task } from '../types';
 
 interface TaskCardProps {
   task: Task;
-  onComplete: (id: number) => void;
-  onDelete: (id: number) => void;
+  onToggle: (id: number) => void;
+  isDragging?: boolean;
+  isClone?: boolean;
 }
 
-export function TaskCard({ task, onComplete, onDelete }: TaskCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+const priorityColors = {
+  high: 'border-red-500/50 text-red-300 shadow-[0_0_10px_rgba(239,68,68,0.2)]',
+  medium: 'border-amber-500/50 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.2)]',
+  low: 'border-emerald-500/50 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
+} as const;
 
-  const priorityConfig = {
-    low: {
-      color: "from-green-400 to-green-500",
-      badge: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-      icon: "🟢",
-    },
-    medium: {
-      color: "from-yellow-400 to-yellow-500",
-      badge: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-      icon: "🟡",
-    },
-    high: {
-      color: "from-red-400 to-red-500",
-      badge: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-      icon: "🔴",
-    },
-  } as const;
-
-  const isOverdue = Boolean(task.dueDate && new Date(task.dueDate) < new Date() && task.status !== "completed");
-  const borderColorClass =
-    task.status === "completed"
-      ? "border-l-gray-300 opacity-75"
-      : isOverdue
-      ? "border-l-red-500 animate-pulse"
-      : task.priority === "high"
-      ? "border-l-red-500"
-      : task.priority === "medium"
-      ? "border-l-yellow-500"
-      : "border-l-green-500";
+const TaskCard = memo(function TaskCard({
+  task,
+  isDragging = false,
+  isClone = false,
+}: TaskCardProps) {
+  const isElevated = isDragging || isClone;
 
   return (
     <div
-      className={`
-        bg-white dark:bg-gray-800 rounded-2xl p-6 mb-4
-        shadow-lg hover:shadow-xl transition-all duration-300
-        transform hover:scale-[1.02] border-l-4
-        ${borderColorClass}
-      `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={[
+        'glass-panel border p-5',
+        'transition-[transform,border-color,box-shadow,background-color,opacity] duration-200 ease-out',
+        'transform-gpu will-change-transform',
+        priorityColors[task.priority],
+        isElevated
+          ? 'scale-[1.015] border-white/20 shadow-[0_20px_50px_rgba(2,6,23,0.42)]'
+          : 'hover:-translate-y-0.5 hover:border-white/20 hover:shadow-[0_14px_32px_rgba(2,6,23,0.28)]',
+        isDragging ? 'pointer-events-none' : '',
+      ].join(' ')}
     >
-      <div className="flex items-start justify-between">
-        <button
-          onClick={() => onComplete(task.id)}
-          className={`
-            mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center
-            transition-all duration-200 transform hover:scale-110
-            ${
-              task.status === "completed"
-                ? "bg-gradient-to-r from-green-400 to-green-500 border-green-500 shadow-lg shadow-green-500/25"
-                : "border-gray-300 dark:border-gray-600 hover:border-green-500 bg-white dark:bg-gray-700"
-            }
-          `}
-        >
-          {task.status === "completed" && <Check className="h-3 w-3 text-white" />}
-        </button>
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <h4 className="text-lg font-semibold text-slate-100 tracking-tight line-clamp-2">
+          {task.description}
+        </h4>
+        <ChevronRight className="text-slate-600 shrink-0" size={20} />
+      </div>
 
-        <div className="flex-1 mx-4">
-          <p
-            className={`
-              text-lg font-semibold transition-all duration-200
-              ${task.status === "completed" ? "line-through text-gray-500 dark:text-gray-400" : "text-gray-900 dark:text-white"}
-              ${isHovered && task.status !== "completed" ? "text-blue-600 dark:text-blue-400" : ""}
-            `}
-          >
-            {task.description}
-          </p>
-
-          <div className="flex flex-wrap items-center gap-2 mt-3">
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${priorityConfig[task.priority].badge}`}>
-              <Flag className="h-3 w-3 mr-1" />
-              {task.priority === "high" ? "Alta" : task.priority === "medium" ? "Média" : "Baixa"}
+      <div className="flex items-center justify-between gap-2 text-xs text-slate-400 border-t border-white/5 pt-4">
+        <div className="flex min-w-0 items-center gap-3">
+          {task.dueDate && (
+            <span className="flex items-center gap-1.5 shrink-0">
+              <Calendar size={14} className="text-cyan-400" />
+              {new Date(task.dueDate).toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+              })}
             </span>
-
-            {task.dueDate && (
-              <span
-                className={`
-                  inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                  ${isOverdue ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"}
-                `}
-              >
-                <Calendar className="h-3 w-3 mr-1" />
-                {new Date(task.dueDate).toLocaleDateString("pt-BR")}
-                {isOverdue && <span className="ml-1">⚠️</span>}
-              </span>
-            )}
-
-            {task.priority === "high" && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-800 dark:from-orange-900/30 dark:to-yellow-900/30 dark:text-orange-300">
-                <Star className="h-3 w-3 mr-1" />
-                Importante
-              </span>
-            )}
-          </div>
-
-          {isExpanded && (
-            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl animate-slide-in">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium text-gray-600 dark:text-gray-400">ID:</span>
-                  <span className="ml-2 text-gray-900 dark:text-white">#{task.id}</span>
-                </div>
-                <div>
-                  <span className="font-medium text-gray-600 dark:text-gray-400">Status:</span>
-                  <span className={`ml-2 capitalize ${task.status === "completed" ? "text-green-600 dark:text-green-400" : "text-yellow-600 dark:text-yellow-400"}`}>
-                    {task.status === "completed" ? "Concluída" : "Pendente"}
-                  </span>
-                </div>
-              </div>
-            </div>
           )}
+          <span className="flex min-w-0 items-center gap-1.5 uppercase tracking-wider font-medium text-slate-500">
+            <Tag size={14} className="shrink-0" />
+            <span className="truncate">{task.category}</span>
+          </span>
         </div>
 
-        <div className={`flex items-center space-x-2 transition-all duration-200 ${isHovered ? "opacity-100" : "opacity-70"}`}>
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-all duration-200 transform hover:scale-110"
-          >
-            <Edit3 className="h-4 w-4" />
-          </button>
-
-          <button
-            onClick={() => onDelete(task.id)}
-            className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-all duration-200 transform hover:scale-110"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
+        <div
+          className={`h-3 w-3 shrink-0 rounded-full ${priorityColors[task.priority]} border-2 border-current`}
+        />
       </div>
     </div>
   );
-}
+});
+
+export default TaskCard;

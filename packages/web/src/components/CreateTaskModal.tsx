@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { X, Calendar, Flag, Zap, Clock, Sparkles } from "lucide-react";
+import { X, Calendar, Flag, Zap, Clock, Sparkles, Trash2, AlertTriangle } from "lucide-react";
 import type { Task, TaskDraft } from "../types";
 
 interface CreateTaskModalProps {
@@ -8,7 +8,29 @@ interface CreateTaskModalProps {
   onAdd: (taskData: TaskDraft) => void | Promise<void>;
   editingTask?: Task | null;
   onUpdate?: ((task: Task) => void | Promise<void>) | null;
+  onDelete?: ((taskId: number) => Promise<boolean>) | null;
 }
+
+const priorityOptions = [
+  { value: "low", label: "Baixa", color: "from-green-400 to-green-500", dotClassName: "bg-green-200" },
+  { value: "medium", label: "Média", color: "from-yellow-400 to-yellow-500", dotClassName: "bg-yellow-200" },
+  { value: "high", label: "Alta", color: "from-red-400 to-red-500", dotClassName: "bg-red-200" },
+] as const;
+
+const categoryOptions = [
+  { value: "work", label: "Trabalho", color: "from-blue-400 to-blue-500" },
+  { value: "personal", label: "Pessoal", color: "from-purple-400 to-purple-500" },
+  { value: "learning", label: "Estudo", color: "from-green-400 to-green-500" },
+  { value: "health", label: "Saúde", color: "from-orange-400 to-orange-500" },
+] as const;
+
+const getPriorityLabel = (priority: TaskDraft["priority"]) => {
+  return priorityOptions.find(option => option.value === priority)?.label ?? priority;
+};
+
+const getCategoryLabel = (category: string) => {
+  return categoryOptions.find(option => option.value === category)?.label ?? category;
+};
 
 export function CreateTaskModal({
   isOpen,
@@ -16,6 +38,7 @@ export function CreateTaskModal({
   onAdd,
   editingTask = null,
   onUpdate = null,
+  onDelete = null,
 }: CreateTaskModalProps) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -25,10 +48,28 @@ export function CreateTaskModal({
     category: "work",
   });
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
+
+  const isEditMode = Boolean(editingTask);
+  const isBusy = isSubmitting || isDeleting;
+
+  const resetForm = () => {
+    setFormData({ description: "", priority: "medium", dueDate: "", category: "work" });
+    setStep(1);
+    setIsDeleteConfirmVisible(false);
+  };
+
+  const handleClose = () => {
+    setIsDeleteConfirmVisible(false);
+    onClose();
+  };
 
   useEffect(() => {
     if (!isOpen) {
       setIsAnimating(false);
+      setIsDeleteConfirmVisible(false);
       return;
     }
 
@@ -53,68 +94,77 @@ export function CreateTaskModal({
         category: editingTask.category || "work",
       });
       setStep(1);
+      setIsDeleteConfirmVisible(false);
     } else {
-      setFormData({ description: "", priority: "medium", dueDate: "", category: "work" });
-      setStep(1);
+      resetForm();
     }
   }, [isOpen, editingTask]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const nextStep = () => setStep(prev => prev + 1);
+  const prevStep = () => setStep(prev => prev - 1);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     if (!formData.description.trim()) {
       return;
     }
 
-    if (editingTask && onUpdate) {
-      const updatedTask: Task = {
-        ...editingTask,
-        content: formData.description,
-        description: formData.description,
-        priority: formData.priority,
-        dueDate: formData.dueDate || undefined,
-        category: formData.category,
-      };
-      void onUpdate(updatedTask);
-    } else {
-      void onAdd({
-        description: formData.description.trim(),
-        priority: formData.priority,
-        dueDate: formData.dueDate || undefined,
-        category: formData.category,
-      });
-    }
+    setIsSubmitting(true);
 
-    setFormData({ description: "", priority: "medium", dueDate: "", category: "work" });
-    setStep(1);
-    onClose();
+    try {
+      if (editingTask && onUpdate) {
+        const updatedTask: Task = {
+          ...editingTask,
+          content: formData.description.trim(),
+          description: formData.description.trim(),
+          priority: formData.priority,
+          dueDate: formData.dueDate || undefined,
+          category: formData.category,
+        };
+        await onUpdate(updatedTask);
+      } else {
+        await onAdd({
+          description: formData.description.trim(),
+          priority: formData.priority,
+          dueDate: formData.dueDate || undefined,
+          category: formData.category,
+        });
+      }
+
+      resetForm();
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const nextStep = () => setStep(prev => prev + 1);
-  const prevStep = () => setStep(prev => prev - 1);
+  const handleDelete = async () => {
+    if (!editingTask || !onDelete) {
+      return;
+    }
 
-  const priorityOptions = [
-    { value: "low", label: "Baixa", color: "from-green-400 to-green-500", icon: "🟢" },
-    { value: "medium", label: "Média", color: "from-yellow-400 to-yellow-500", icon: "🟡" },
-    { value: "high", label: "Alta", color: "from-red-400 to-red-500", icon: "🔴" },
-  ] as const;
+    setIsDeleting(true);
 
-  const categoryOptions = [
-    { value: "work", label: "💼 Trabalho", color: "from-blue-400 to-blue-500" },
-    { value: "personal", label: "🏠 Pessoal", color: "from-purple-400 to-purple-500" },
-    { value: "learning", label: "📚 Estudo", color: "from-green-400 to-green-500" },
-    { value: "health", label: "💪 Saúde", color: "from-orange-400 to-orange-500" },
-  ];
+    try {
+      const deleted = await onDelete(editingTask.id);
 
-  const isEditMode = Boolean(editingTask);
+      if (deleted) {
+        resetForm();
+        onClose();
+      }
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       <div
@@ -139,8 +189,9 @@ export function CreateTaskModal({
               </div>
             </div>
             <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 transform hover:scale-110"
+              onClick={handleClose}
+              disabled={isBusy}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 transform hover:scale-110 disabled:opacity-50"
             >
               <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
             </button>
@@ -165,19 +216,20 @@ export function CreateTaskModal({
                 </label>
                 <textarea
                   value={formData.description}
-                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  onChange={event => setFormData({ ...formData, description: event.target.value })}
                   placeholder="Descreva sua task de forma clara e objetiva..."
                   rows={4}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
                   required
                   autoFocus
+                  disabled={isBusy}
                 />
               </div>
 
               <button
                 type="button"
                 onClick={nextStep}
-                disabled={!formData.description.trim()}
+                disabled={!formData.description.trim() || isBusy}
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:hover:scale-100"
               >
                 Continuar
@@ -198,8 +250,9 @@ export function CreateTaskModal({
                       key={option.value}
                       type="button"
                       onClick={() => setFormData({ ...formData, priority: option.value })}
+                      disabled={isBusy}
                       className={`
-                        p-3 rounded-xl border-2 transition-all duration-200 transform hover:scale-105
+                        p-3 rounded-xl border-2 transition-all duration-200 transform hover:scale-105 disabled:opacity-50
                         ${
                           formData.priority === option.value
                             ? `border-transparent bg-gradient-to-r ${option.color} text-white shadow-lg`
@@ -208,7 +261,7 @@ export function CreateTaskModal({
                       `}
                     >
                       <div className="text-center">
-                        <div className="text-lg mb-1">{option.icon}</div>
+                        <span className={`mb-2 inline-flex h-3 w-3 rounded-full ${option.dotClassName}`} />
                         <div className="text-sm font-medium">{option.label}</div>
                       </div>
                     </button>
@@ -227,8 +280,9 @@ export function CreateTaskModal({
                       key={option.value}
                       type="button"
                       onClick={() => setFormData({ ...formData, category: option.value })}
+                      disabled={isBusy}
                       className={`
-                        p-3 rounded-xl border-2 transition-all duration-200 transform hover:scale-105
+                        p-3 rounded-xl border-2 transition-all duration-200 transform hover:scale-105 disabled:opacity-50
                         ${
                           formData.category === option.value
                             ? `border-transparent bg-gradient-to-r ${option.color} text-white shadow-lg`
@@ -248,14 +302,16 @@ export function CreateTaskModal({
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-200 transform hover:scale-105"
+                  disabled={isBusy}
+                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
                 >
                   Voltar
                 </button>
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105"
+                  disabled={isBusy}
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
                 >
                   Continuar
                 </button>
@@ -275,7 +331,8 @@ export function CreateTaskModal({
                   <input
                     type="date"
                     value={formData.dueDate}
-                    onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
+                    onChange={event => setFormData({ ...formData, dueDate: event.target.value })}
+                    disabled={isBusy}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
@@ -294,7 +351,7 @@ export function CreateTaskModal({
                         : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
                     }`}
                   >
-                    {formData.priority === "high" ? "Alta" : formData.priority === "medium" ? "Média" : "Baixa"}
+                    {getPriorityLabel(formData.priority)}
                   </span>
                   {formData.category && (
                     <span
@@ -308,7 +365,7 @@ export function CreateTaskModal({
                           : "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
                       }`}
                     >
-                      {categoryOptions.find(cat => cat.value === formData.category)?.label || formData.category}
+                      {getCategoryLabel(formData.category)}
                     </span>
                   )}
                   {formData.dueDate && (
@@ -319,19 +376,74 @@ export function CreateTaskModal({
                 </div>
               </div>
 
+              {isEditMode && (
+                <div className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-950/30">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-xl bg-red-100 p-2 text-red-600 dark:bg-red-900/40 dark:text-red-300">
+                        <AlertTriangle className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-red-700 dark:text-red-300">Excluir task</h4>
+                        <p className="mt-1 text-sm text-red-600/80 dark:text-red-200/70">
+                          A confirmação acontece aqui no modal, sem usar resposta nativa do navegador.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsDeleteConfirmVisible(prev => !prev)}
+                      disabled={!onDelete || isBusy}
+                      className="inline-flex items-center gap-2 rounded-xl border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-all duration-200 hover:bg-red-50 disabled:opacity-50 dark:border-red-800/60 dark:bg-red-950/20 dark:text-red-300 dark:hover:bg-red-950/40"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Excluir
+                    </button>
+                  </div>
+
+                  {isDeleteConfirmVisible && (
+                    <div className="mt-4 rounded-2xl border border-red-200 bg-white/80 p-4 dark:border-red-900/40 dark:bg-black/20">
+                      <p className="text-sm text-slate-700 dark:text-slate-200">
+                        Tem certeza que deseja excluir esta task? Essa ação não pode ser desfeita.
+                      </p>
+                      <div className="mt-4 flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setIsDeleteConfirmVisible(false)}
+                          disabled={isBusy}
+                          className="flex-1 rounded-xl border border-gray-300 px-4 py-3 font-medium text-gray-700 transition-all duration-200 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDelete}
+                          disabled={!onDelete || isBusy}
+                          className="flex-1 rounded-xl bg-gradient-to-r from-red-500 to-red-600 px-4 py-3 font-semibold text-white shadow-lg shadow-red-500/20 transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
+                        >
+                          {isDeleting ? "Excluindo..." : "Confirmar exclusão"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="flex space-x-3">
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-200 transform hover:scale-105"
+                  disabled={isBusy}
+                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
                 >
                   Voltar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  disabled={isBusy}
+                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:transform-none"
                 >
-                  {isEditMode ? "💾 Salvar Task" : "✨ Criar Task"}
+                  {isSubmitting ? "Salvando..." : isEditMode ? "Salvar Task" : "Criar Task"}
                 </button>
               </div>
             </div>

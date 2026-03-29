@@ -14,5 +14,12 @@
   ],
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.0"
+  },
+  "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
+    "bcryptjs": "^3.0.3",
+    "framer-motion": "^12.38.0",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.7.0"
   }
 }

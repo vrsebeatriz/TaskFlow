@@ -1,165 +1,57 @@
-import { useState } from "react";
-import { Plus, Search, Flag } from "lucide-react";
-import { TaskCard } from "./TaskCard";
-import type { Task } from "../types";
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import TaskCard from './TaskCard';
+import { Task } from '../types';
 
-interface TaskDashboardProps {
+interface Props {
   tasks: Task[];
-  onComplete: (id: number) => void;
-  onDelete: (id: number) => void;
-  onAddTask: () => void;
-  onUpdateTask?: (id: number, updates: Partial<Task>) => void;
+  onToggleTask: (id: number) => void;
 }
 
-export function TaskDashboard({ tasks, onComplete, onDelete, onAddTask }: TaskDashboardProps) {
-  const [filter, setFilter] = useState<"all" | "pending" | "completed">("all");
-  const [search, setSearch] = useState("");
-  const [priorityFilter, setPriorityFilter] = useState<"all" | "high" | "medium" | "low">("all");
-
-  const filteredTasks = tasks
-    .filter(task => {
-      if (filter === "all") return true;
-      return task.status === filter;
-    })
-    .filter(task => {
-      if (priorityFilter === "all") return true;
-      return task.priority === priorityFilter;
-    })
-    .filter(task => {
-      const searchValue = search.toLowerCase();
-      return (
-        task.description.toLowerCase().includes(searchValue) ||
-        (task.content || "").toLowerCase().includes(searchValue)
-      );
-    });
-
-  const priorityStats = {
-    high: tasks.filter(task => task.priority === "high").length,
-    medium: tasks.filter(task => task.priority === "medium").length,
-    low: tasks.filter(task => task.priority === "low").length,
-  };
+const TaskDashboard: React.FC<Props> = ({ tasks, onToggleTask }) => {
+  const pendingTasks = tasks.filter(t => t.status !== 'completed');
+  const completedTasks = tasks.filter(t => t.status === 'completed');
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 space-y-4 lg:space-y-0">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Minhas Tasks</h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            {tasks.length} tasks no total • {filteredTasks.length} filtradas
-          </p>
-        </div>
+    <div className="max-w-6xl mx-auto p-6">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+          As Minhas Tarefas
+        </h1>
+        <p className="text-slate-400 mt-1">Tens {pendingTasks.length} tarefas pendentes para hoje.</p>
+      </header>
 
-        <button
-          onClick={onAddTask}
-          className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Nova Task</span>
-        </button>
-      </div>
-
-      <div className="flex flex-col lg:flex-row gap-4 mb-6">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <input
-            type="text"
-            placeholder="Buscar tasks..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-            {(["all", "pending", "completed"] as const).map(filterType => (
-              <button
-                key={filterType}
-                onClick={() => setFilter(filterType)}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                  filter === filterType
-                    ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                }`}
-              >
-                {filterType === "all" && "Todas"}
-                {filterType === "pending" && "Pendentes"}
-                {filterType === "completed" && "Concluídas"}
-              </button>
-            ))}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <section>
+          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]" />
+            Em Foco
+          </h2>
+          <div className="space-y-3">
+            <AnimatePresence mode="popLayout">
+              {pendingTasks.map(task => (
+                <TaskCard key={task.id} task={task} onToggle={onToggleTask} />
+              ))}
+            </AnimatePresence>
           </div>
+        </section>
 
-          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-            {(["all", "high", "medium", "low"] as const).map(priority => (
-              <button
-                key={priority}
-                onClick={() => setPriorityFilter(priority)}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                  priorityFilter === priority
-                    ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                }`}
-              >
-                {priority === "all" && "Todas"}
-                {priority === "high" && "Alta"}
-                {priority === "medium" && "Média"}
-                {priority === "low" && "Baixa"}
-              </button>
-            ))}
+        <section className="opacity-60 grayscale-[0.5] hover:grayscale-0 transition-all">
+          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-slate-500" />
+            Concluídas
+          </h2>
+          <div className="space-y-3">
+            <AnimatePresence mode="popLayout">
+              {completedTasks.map(task => (
+                <TaskCard key={task.id} task={task} onToggle={onToggleTask} />
+              ))}
+            </AnimatePresence>
           </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-          <Flag className="h-4 w-4 text-red-500 mx-auto mb-1" />
-          <div className="text-sm font-medium text-gray-600 dark:text-gray-400">Alta Prioridade</div>
-          <div className="text-lg font-bold text-gray-900 dark:text-white">{priorityStats.high}</div>
-        </div>
-        <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-          <Flag className="h-4 w-4 text-yellow-500 mx-auto mb-1" />
-          <div className="text-sm font-medium text-gray-600 dark:text-gray-400">Média Prioridade</div>
-          <div className="text-lg font-bold text-gray-900 dark:text-white">{priorityStats.medium}</div>
-        </div>
-        <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-          <Flag className="h-4 w-4 text-green-500 mx-auto mb-1" />
-          <div className="text-sm font-medium text-gray-600 dark:text-gray-400">Baixa Prioridade</div>
-          <div className="text-lg font-bold text-gray-900 dark:text-white">{priorityStats.low}</div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {filteredTasks.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-400 dark:text-gray-500 text-6xl mb-4">📝</div>
-            <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
-              {tasks.length === 0 ? "Nenhuma task criada ainda" : "Nenhuma task encontrada"}
-            </p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mb-4">
-              {search || filter !== "all" || priorityFilter !== "all"
-                ? "Tente ajustar os filtros de busca"
-                : "Comece criando sua primeira task"}
-            </p>
-            {tasks.length === 0 && (
-              <button
-                onClick={onAddTask}
-                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-              >
-                Criar sua primeira task
-              </button>
-            )}
-          </div>
-        ) : (
-          filteredTasks.map(task => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onComplete={onComplete}
-              onDelete={onDelete}
-            />
-          ))
-        )}
+        </section>
       </div>
     </div>
   );
-}
+};
+
+export default TaskDashboard;

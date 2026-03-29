@@ -1,191 +1,58 @@
 // src/services/api.js
+import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
-const API_OFFLINE_MESSAGE = 'API offline. Inicie `npm run dev:api` para carregar as tasks.';
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
+});
 
-const getStoredUser = () => {
-  const savedUser = localStorage.getItem('user');
-
-  if (!savedUser) {
-    return null;
+// Interceptor para injetar o token JWT em cada requisição
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('@TaskFlow:token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  try {
-    return JSON.parse(savedUser);
-  } catch {
-    localStorage.removeItem('user');
-    return null;
-  }
-};
-
-// FunÃ§Ã£o para obter o userId do localStorage
-const getCurrentUserId = () => {
-  const user = getStoredUser();
-  return user?.id;
-};
-
-const request = async (path, options = {}, fallbackMessage = 'Erro na requisição') => {
-  try {
-    const response = await fetch(`${API_BASE}${path}`, options);
-    const contentType = response.headers.get('content-type') || '';
-    const data = contentType.includes('application/json') ? await response.json() : null;
-
-    if (!response.ok) {
-      throw new Error(data?.error || fallbackMessage);
-    }
-
-    return data;
-  } catch (error) {
-    if (error instanceof TypeError) {
-      throw new Error(API_OFFLINE_MESSAGE);
-    }
-
-    throw error;
-  }
-};
-
-// Tasks Service
+// Service de Tarefas
 export const tasksService = {
-  // Buscar tasks do usuÃ¡rio atual
   getAllTasks: async () => {
-    const userId = getCurrentUserId();
-    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
-
-    return request(`/tasks?userId=${userId}`, {}, 'Erro ao buscar tasks');
+    const response = await api.get('/tasks');
+    return response.data;
   },
 
-  // Criar task para o usuÃ¡rio atual
   createTask: async (taskData) => {
-    const userId = getCurrentUserId();
-    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
-
-    return request('/tasks', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...taskData,
-        userId,
-      }),
-    }, 'Erro ao criar task');
+    const response = await api.post('/tasks', taskData);
+    return response.data;
   },
 
-  // Atualizar task (apenas do usuÃ¡rio atual)
   updateTask: async (taskId, updates) => {
-    const userId = getCurrentUserId();
-    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
-
-    return request(`/tasks/${taskId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...updates,
-        userId,
-      }),
-    }, 'Erro ao atualizar task');
+    const response = await api.put(`/tasks/${taskId}`, updates);
+    return response.data;
   },
 
-  // Marcar task como completa
   completeTask: async (taskId) => {
-    const userId = getCurrentUserId();
-    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
-
-    return request(`/tasks/${taskId}/complete`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId }),
-    }, 'Erro ao completar task');
+    const response = await api.put(`/tasks/${taskId}/complete`);
+    return response.data;
   },
 
-  // Deletar task (apenas do usuÃ¡rio atual)
   deleteTask: async (taskId) => {
-    const userId = getCurrentUserId();
-    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
-
-    return request(`/tasks/${taskId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId }),
-    }, 'Erro ao deletar task');
-  },
-
-  // Buscar estatÃ­sticas do usuÃ¡rio atual
-  getStats: async () => {
-    const userId = getCurrentUserId();
-    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
-
-    return request(`/stats?userId=${userId}`, {}, 'Erro ao buscar estatÃ­sticas');
-  },
-
-  // Calcular eficiÃªncia do usuÃ¡rio atual
-  getEfficiency: async () => {
-    const userId = getCurrentUserId();
-    if (!userId) throw new Error('UsuÃ¡rio nÃ£o autenticado');
-
-    return request(`/efficiency?userId=${userId}`, {}, 'Erro ao calcular eficiÃªncia');
+    const response = await api.delete(`/tasks/${taskId}`);
+    return response.data;
   }
 };
 
-// Auth Service
+// Service de Autenticação
 export const authService = {
-  // Registrar usuÃ¡rio
-  register: async (userData) => {
-    return request('/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    }, 'Erro ao cadastrar usuário');
-  },
-
-  // Login
   login: async (credentials) => {
-    return request('/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    }, 'Erro ao fazer login');
+    const response = await api.post('/auth/login', credentials);
+    return response.data;
   },
-
-  // Verificar usuÃ¡rio atual
-  getCurrentUser: async () => {
-    return request('/auth/me', {}, 'Erro ao verificar usuÃ¡rio');
-  },
-
-  // Logout (frontend apenas)
-  logout: () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+  register: async (userData) => {
+    const response = await api.post('/auth/register', userData);
+    return response.data;
   }
 };
 
-// Health check
-export const healthCheck = async () => {
-  return request('/health', {}, 'Erro ao verificar a API');
-};
-
-// FunÃ§Ã£o utilitÃ¡ria para verificar conexÃ£o com a API
-export const checkApiConnection = async () => {
-  try {
-    const health = await healthCheck();
-    return { connected: true, data: health };
-  } catch (error) {
-    return {
-      connected: false,
-      error: error instanceof Error ? error.message : 'Erro desconhecido'
-    };
-  }
-};
-
-// FunÃ§Ã£o para simular delay (para testes)
-export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// Exportação padrão para garantir compatibilidade com o App.tsx
+export default api;

@@ -1,73 +1,90 @@
-// src/contexts/AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authService } from '../services/api';
+import api from '../services/api';
 
-const AuthContext = createContext();
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
-  }
-  return context;
-};
+const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar se há usuário salvo no localStorage ao carregar
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    // Tenta carregar o usuário e o token salvos ao iniciar a aplicação
+    async function loadStorageData() {
+      const storageUser = localStorage.getItem('@TaskFlow:user');
+      const storageToken = localStorage.getItem('@TaskFlow:token');
+
+      if (storageUser && storageToken) {
+        // Define o cabeçalho de autorização para todas as chamadas futuras
+        api.defaults.headers.Authorization = `Bearer ${storageToken}`;
+        setUser(JSON.parse(storageUser));
+      }
+      setLoading(false);
     }
-    setLoading(false);
+
+    loadStorageData();
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await authService.login({ email, password });
-      if (response.success) {
-        setUser(response.user);
-        localStorage.setItem('user', JSON.stringify(response.user));
-        return { success: true };
-      }
+      const response = await api.post('/auth/login', { email, password });
+      const { token, user: userData } = response.data;
+
+      // Persistência dos dados no localStorage
+      localStorage.setItem('@TaskFlow:token', token);
+      localStorage.setItem('@TaskFlow:user', JSON.stringify(userData));
+
+      // Configura o token nas futuras requisições da API
+      api.defaults.headers.Authorization = `Bearer ${token}`;
+      
+      setUser(userData);
+      return { success: true };
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error('Erro no login:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Falha na autenticação' 
+      };
     }
   };
 
   const register = async (name, email, password) => {
     try {
-      const response = await authService.register({ name, email, password });
-      if (response.success) {
-        setUser(response.user);
-        localStorage.setItem('user', JSON.stringify(response.user));
-        return { success: true };
-      }
+      await api.post('/auth/register', { name, email, password });
+      return { success: true };
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error('Erro no registro:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Erro ao criar conta' 
+      };
     }
   };
 
   const logout = () => {
+    localStorage.removeItem('@TaskFlow:token');
+    localStorage.removeItem('@TaskFlow:user');
+    api.defaults.headers.Authorization = undefined;
     setUser(null);
-    authService.logout();
-  };
-
-  const value = {
-    user,
-    login,
-    register,
-    logout,
-    loading,
-    isAuthenticated: !!user
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ 
+      signed: !!user, 
+      user, 
+      loading, 
+      login, 
+      register, 
+      logout 
+    }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth deve ser utilizado dentro de um AuthProvider');
+  }
+  return context;
 };
