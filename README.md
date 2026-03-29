@@ -83,7 +83,7 @@ O App estará disponível em http://localhost:5173.
 
 - [x] Implementar Autenticação JWT e Hash de Passwords.
 - [x] Modernizar UI com Glassmorphism e Framer Motion.
-- [ ] Implementar persistência de Drag and Drop no base de dados.
+- [x] Implementar persistência de Drag and Drop no base de dados.
 - [ ] Adicionar suporte a Dark/Light Mode dinâmico.
 - [ ] Criar aplicação Mobile com React Native.
 

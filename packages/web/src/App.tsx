@@ -8,15 +8,18 @@ import {
   Plus 
 } from "lucide-react";
 
-// Componentes
+// Componentes Core
 import KanbanBoard from "./components/KanbanBoard";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { LoginModal } from "./components/LoginModal";
-import { RegisterModal } from "./components/RegisterModal";
 import { CreateTaskModal } from "./components/CreateTaskModal";
 import { EditTaskModal } from "./components/EditTaskModal";
 import { ToastProvider, useToast } from "./components/Toast";
 import { AdvancedPomodoro } from "./components/AdvancedPomodoro";
+
+// Componentes de Estatísticas
+import { DashboardStats } from "./components/DashboardStats";
+import { StatsOverview } from "./components/StatsOverview";
+import { AnimatedCharts, ProductivityChart } from "./components/AnimatedCharts";
 
 // Serviços e Tipos
 import { tasksService } from "./services/api";
@@ -34,7 +37,6 @@ function App() {
 }
 
 function AppContent() {
-  // --- ESTADOS ---
   const [activeTab, setActiveTab] = useState("kanban");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -44,14 +46,8 @@ function AppContent() {
   const { user, logout } = useAuth();
   const { addToast } = useToast();
 
-  // --- CARREGAMENTO ---
   useEffect(() => {
-    if (user) {
-      loadTasks();
-    } else {
-      setTasks([]);
-      setIsLoading(false);
-    }
+    if (user) loadTasks();
   }, [user]);
 
   const loadTasks = async () => {
@@ -66,23 +62,13 @@ function AppContent() {
     }
   };
 
-  // --- AÇÕES DE TAREFAS ---
-  
-  // Função para Arrastar ou Mover Rápido
   const handleTaskMove = async (taskId: number, newStatus: Task["status"]) => {
     try {
-      // Atualização Otimista (move na tela antes de salvar)
-      const originalTasks = [...tasks];
       setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: newStatus } : t));
-
       await tasksService.updateTask(taskId, { status: newStatus });
-    } catch (error: any) {
-      if (error.response?.status === 404) {
-        addToast("Tarefa não encontrada no banco. Sincronizando...", "error");
-      } else {
-        addToast("Erro ao salvar movimento.", "error");
-      }
-      loadTasks(); // Reverte para o estado real do banco
+    } catch (error) {
+      addToast("Erro ao salvar movimento.", "error");
+      loadTasks();
     }
   };
 
@@ -91,7 +77,7 @@ function AppContent() {
       const newTask = await tasksService.createTask(taskData);
       setTasks(prev => [newTask, ...prev]);
       setIsCreateModalOpen(false);
-      addToast("Tarefa criada com sucesso!", "success");
+      addToast("Tarefa criada!", "success");
     } catch (error) {
       addToast("Erro ao criar tarefa.", "error");
     }
@@ -104,7 +90,7 @@ function AppContent() {
       setEditingTask(null);
       addToast("Tarefa atualizada!", "success");
     } catch (error) {
-      addToast("Erro ao editar tarefa.", "error");
+      addToast("Erro ao editar.", "error");
     }
   };
 
@@ -121,77 +107,69 @@ function AppContent() {
     }
   };
 
-  // --- RENDERS CONDICIONAIS ---
-  if (!user) return (
-    <div className="min-h-screen bg-[#020617] flex items-center justify-center p-4">
-      <div className="glass-panel p-10 text-center max-w-sm w-full">
-        <CheckSquare className="h-12 w-12 text-cyan-400 mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-gradient mb-6">TaskFlow Pro</h1>
-        <p className="text-slate-400 text-sm mb-8">Faça login para gerenciar suas tarefas.</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="w-full py-3 bg-cyan-600 rounded-xl font-bold hover:bg-cyan-500 transition-all"
-        >
-          Entrar no Sistema
-        </button>
-      </div>
-    </div>
-  );
+  if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row gap-6 p-6 md:p-10">
+    <div className="min-h-screen flex flex-col md:flex-row gap-6 p-6 md:p-10 relative overflow-x-visible">
       
-      {/* SIDEBAR LATERAL */}
-      <aside className="w-full md:w-64 flex flex-col gap-6">
-        <div className="glass-panel p-6 flex flex-col gap-8 h-full border-cyan-500/10">
-          
-          {/* Logo */}
+      {/* SIDEBAR */}
+      <aside className="w-full md:w-80 flex flex-col gap-6 shrink-0">
+        <div className="glass-panel p-6 flex flex-col gap-8 h-full">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-              <CheckSquare className="text-white" size={24} />
+            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg border border-white/20">
+              <CheckSquare className="text-white" size={22} />
             </div>
-            <span className="font-black text-xl tracking-tighter italic text-gradient uppercase">TaskFlow</span>
+            <span className="font-black text-xl tracking-tighter text-gradient">TaskFlow</span>
           </div>
 
-          {/* Navegação */}
           <nav className="flex flex-col gap-2">
             <button 
               onClick={() => setActiveTab('dashboard')} 
-              className={`flex items-center gap-3 p-3 rounded-xl transition-all ${activeTab === 'dashboard' ? 'bg-white/10 text-cyan-400 border border-white/10' : 'text-slate-500 hover:bg-white/5'}`}
+              className={`flex items-center gap-3 p-3 rounded-2xl transition-all duration-200 ${
+                activeTab === 'dashboard' 
+                  ? 'bg-white/20 text-white border border-white/25' 
+                  : 'text-white/60 hover:bg-white/10 hover:text-white'
+              }`}
             >
               <LayoutDashboard size={20} /> Dashboard
             </button>
             <button 
               onClick={() => setActiveTab('kanban')} 
-              className={`flex items-center gap-3 p-3 rounded-xl transition-all ${activeTab === 'kanban' ? 'bg-white/10 text-cyan-400 border border-white/10' : 'text-slate-500 hover:bg-white/5'}`}
+              className={`flex items-center gap-3 p-3 rounded-2xl transition-all duration-200 ${
+                activeTab === 'kanban' 
+                  ? 'bg-white/20 text-white border border-white/25' 
+                  : 'text-white/60 hover:bg-white/10 hover:text-white'
+              }`}
             >
               <ClipboardList size={20} /> Kanban
             </button>
             <button 
               onClick={() => setActiveTab('pomodoro')} 
-              className={`flex items-center gap-3 p-3 rounded-xl transition-all ${activeTab === 'pomodoro' ? 'bg-white/10 text-cyan-400 border border-white/10' : 'text-slate-500 hover:bg-white/5'}`}
+              className={`flex items-center gap-3 p-3 rounded-2xl transition-all duration-200 ${
+                activeTab === 'pomodoro' 
+                  ? 'bg-white/20 text-white border border-white/25' 
+                  : 'text-white/60 hover:bg-white/10 hover:text-white'
+              }`}
             >
               <Timer size={20} /> Pomodoro
             </button>
           </nav>
 
-          {/* Botão Nova Tarefa */}
           <button 
             onClick={() => setIsCreateModalOpen(true)} 
-            className="mt-4 flex items-center justify-center gap-2 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold transition-all shadow-lg"
+            className="mt-4 flex items-center justify-center gap-2 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-2xl font-semibold transition-all border border-white/20 hover:border-white/30"
           >
             <Plus size={20} /> Nova Tarefa
           </button>
 
-          {/* User & Logout */}
-          <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+          <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2 truncate">
-              <div className="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-[10px] font-bold">
-                {user.name.charAt(0).toUpperCase()}
+              <div className="w-8 h-8 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-[10px] font-bold text-white uppercase">
+                {user.name.charAt(0)}
               </div>
-              <span className="text-xs font-medium text-slate-300 truncate">{user.name}</span>
+              <span className="text-xs font-medium text-white/70 truncate">{user.name}</span>
             </div>
-            <button onClick={logout} className="text-slate-500 hover:text-red-400 transition-colors">
+            <button onClick={logout} className="text-white/40 hover:text-white/80 transition-colors">
               <LogOut size={18} />
             </button>
           </div>
@@ -199,52 +177,73 @@ function AppContent() {
       </aside>
 
       {/* CONTEÚDO PRINCIPAL */}
-      <main className="flex-1 flex flex-col gap-6">
-        <header>
-          <h2 className="text-3xl font-bold text-gradient uppercase tracking-tight">
-            {activeTab === 'kanban' ? 'Quadro de Tarefas' : activeTab === 'dashboard' ? 'Dashboard Geral' : 'Timer de Foco'}
+      <main className="flex-1 flex flex-col gap-6 min-w-0 overflow-x-visible">
+        <header className="flex flex-col gap-1 px-1">
+          <p className="text-white/50 text-xs font-bold tracking-[0.2em] uppercase">Overview</p>
+          <h2 className="text-3xl font-black text-white uppercase tracking-tight">
+            {activeTab === 'kanban' ? 'Quadro de Tarefas' : activeTab === 'dashboard' ? 'Performance' : 'Timer'}
           </h2>
         </header>
 
-        <section className="flex-1">
-          {isLoading ? (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-cyan-400 animate-pulse font-mono tracking-widest">SINCRO_DATA...</div>
-            </div>
-          ) : activeTab === 'kanban' ? (
-            <KanbanBoard 
-              tasks={tasks} 
-              onTaskMove={handleTaskMove} 
-              onEditTask={setEditingTask} 
-            />
-          ) : activeTab === 'pomodoro' ? (
-            <div className="glass-panel h-full p-6 md:p-8">
-              <AdvancedPomodoro />
-            </div>
-          ) : (
-            <div className="glass-panel p-10 h-full flex items-center justify-center border-dashed border-2 text-slate-600 italic">
-               Dashboard em desenvolvimento para Beatriz...
-            </div>
-          )}
+        {/* Ajuste de Padding e Scroll para evitar o corte */}
+        <section className="flex-1 overflow-y-auto overflow-x-visible px-1 py-2 custom-scrollbar">
+          <div key={activeTab} className="animate-container fade-transition animate-in">
+            {isLoading ? (
+              <div className="h-full flex items-center justify-center min-h-[400px]">
+                <div className="text-white/50 animate-pulse font-mono tracking-widest text-sm uppercase">
+                  Sincronizando...
+                </div>
+              </div>
+            ) : activeTab === 'kanban' ? (
+              <div className="kanban-board-container overflow-x-visible">
+                <KanbanBoard 
+                  tasks={tasks} 
+                  onTaskMove={handleTaskMove} 
+                  onEditTask={setEditingTask} 
+                />
+              </div>
+            ) : activeTab === 'pomodoro' ? (
+              <div className="glass-panel h-full p-6 md:p-8">
+                <AdvancedPomodoro />
+              </div>
+            ) : activeTab === 'dashboard' ? (
+              <div className="flex flex-col gap-8 px-2 pb-10">
+                <DashboardStats tasks={tasks} />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="glass-panel p-6">
+                    <h3 className="text-xs font-bold text-white/60 mb-6 uppercase tracking-wider">
+                      Distribuição
+                    </h3>
+                    <ProductivityChart tasks={tasks} />
+                  </div>
+                  
+                  <div className="glass-panel p-6">
+                    <h3 className="text-xs font-bold text-white/60 mb-6 uppercase tracking-wider">
+                      Status
+                    </h3>
+                    <StatsOverview tasks={tasks} />
+                  </div>
+                </div>
+
+                <div className="glass-panel p-6">
+                  <h3 className="text-xs font-bold text-white/60 mb-6 uppercase tracking-wider">
+                    Eficiência
+                  </h3>
+                  <AnimatedCharts tasks={tasks} />
+                </div>
+              </div>
+            ) : (
+              <div className="glass-panel p-10 h-full flex items-center justify-center border-dashed border-2 border-white/10 text-white/40 italic text-center">
+                Selecione uma opção no menu lateral.
+              </div>
+            )}
+          </div>
         </section>
       </main>
 
-      {/* MODAIS */}
-      <CreateTaskModal 
-        isOpen={isCreateModalOpen} 
-        onClose={() => setIsCreateModalOpen(false)} 
-        onAdd={handleAddTask} 
-      />
-
-      {editingTask && (
-        <EditTaskModal 
-          isOpen={true} 
-          onClose={() => setEditingTask(null)} 
-          task={editingTask} 
-          onUpdate={handleUpdateTask}
-          onDelete={handleDeleteTask}
-        />
-      )}
+      <CreateTaskModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onAdd={handleAddTask} />
+      {editingTask && <EditTaskModal isOpen={true} onClose={() => setEditingTask(null)} task={editingTask} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} />}
     </div>
   );
 }

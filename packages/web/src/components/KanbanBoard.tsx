@@ -164,11 +164,11 @@ function KanbanBoard({ tasks, onTaskMove, onEditTask }: KanbanBoardProps) {
       onDragStart={start => setActiveDragId(start.draggableId)}
       onDragEnd={onDragEnd}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full items-start overflow-x-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full items-start overflow-x-visible">
         {columns.map(column => (
           <div
             key={column.id}
-            className="glass-panel flex min-h-[500px] flex-col overflow-hidden border-white/5 bg-white/[0.01] transition-[border-color,box-shadow,background-color] duration-200"
+            className="glass-panel flex min-h-[500px] flex-col overflow-visible border-white/5 bg-white/[0.01] transition-[border-color,box-shadow,background-color] duration-200"
           >
             <div className="flex items-center justify-between border-b border-white/5 p-5">
               <div className="flex items-center gap-3">
@@ -201,7 +201,7 @@ function KanbanBoard({ tasks, onTaskMove, onEditTask }: KanbanBoardProps) {
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                   className={[
-                    'min-h-[200px] flex-1 p-4 transition-[background-color,padding] duration-150',
+                    'min-h-[200px] flex-1 p-4 transition-[background-color,padding] duration-150 overflow-visible',
                     snapshot.isDraggingOver ? 'rounded-b-2xl bg-white/[0.04]' : '',
                     snapshot.draggingFromThisWith ? 'bg-white/[0.015]' : '',
                   ].join(' ')}
