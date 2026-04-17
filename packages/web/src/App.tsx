@@ -1,11 +1,14 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { 
   CheckSquare, 
   LayoutDashboard, 
   ClipboardList, 
   Timer, 
   LogOut, 
-  Plus 
+  Plus,
+  Search,
+  Bell,
+  Activity
 } from "lucide-react";
 
 // Componentes Core
@@ -20,6 +23,10 @@ import { AdvancedPomodoro } from "./components/AdvancedPomodoro";
 import { DashboardStats } from "./components/DashboardStats";
 import { StatsOverview } from "./components/StatsOverview";
 import { AnimatedCharts, ProductivityChart } from "./components/AnimatedCharts";
+
+// Auth
+import { LoginModal } from "./components/LoginModal";
+import { RegisterModal } from "./components/RegisterModal";
 
 // Serviços e Tipos
 import { tasksService } from "./services/api";
@@ -41,9 +48,11 @@ function AppContent() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(true);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth() as any;
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -107,95 +116,180 @@ function AppContent() {
     }
   };
 
-  if (!user) return null;
-
-  return (
-    <div className="min-h-screen flex flex-col md:flex-row gap-6 p-6 md:p-10 relative overflow-x-visible">
-      
-      {/* SIDEBAR */}
-      <aside className="w-full md:w-80 flex flex-col gap-6 shrink-0">
-        <div className="glass-panel p-6 flex flex-col gap-8 h-full">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg border border-white/20">
-              <CheckSquare className="text-white" size={22} />
+  if (!user) {
+    return (
+      <div className="flex min-h-screen bg-[#000000] text-gray-300 font-sans items-center justify-center relative overflow-hidden">
+        {/* Background Grid */}
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)", backgroundSize: "32px 32px", maskImage: "radial-gradient(ellipse at center, black 40%, transparent 80%)" }}></div>
+        
+        <div className="z-10 text-center space-y-8 animate-in fade-in zoom-in duration-700">
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600/20 border border-blue-500/30">
+              <Activity className="h-6 w-6 text-blue-400" />
             </div>
-            <span className="font-black text-xl tracking-tighter text-gradient">TaskFlow</span>
+            <h1 className="text-3xl font-manrope font-bold text-gray-100 tracking-tight">TaskFlow Pro</h1>
+          </div>
+          
+          <div className="space-y-4">
+            <h2 className="text-xl font-manrope font-semibold text-gray-200">Acesse sua conta</h2>
+            <p className="text-[13px] text-gray-500 font-mono tracking-widest uppercase">Gerencie suas tarefas com eficiência</p>
           </div>
 
-          <nav className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4 mt-8 max-w-xs mx-auto">
             <button 
-              onClick={() => setActiveTab('dashboard')} 
-              className={`flex items-center gap-3 p-3 rounded-2xl transition-all duration-200 ${
-                activeTab === 'dashboard' 
-                  ? 'bg-white/20 text-white border border-white/25' 
-                  : 'text-white/60 hover:bg-white/10 hover:text-white'
-              }`}
+              onClick={() => { setIsLoginModalOpen(true); setIsRegisterModalOpen(false); }}
+              className="w-full bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-4 px-6 hover:bg-blue-500 transition-colors"
             >
-              <LayoutDashboard size={20} /> Dashboard
+              Fazer Login
             </button>
             <button 
-              onClick={() => setActiveTab('kanban')} 
-              className={`flex items-center gap-3 p-3 rounded-2xl transition-all duration-200 ${
-                activeTab === 'kanban' 
-                  ? 'bg-white/20 text-white border border-white/25' 
-                  : 'text-white/60 hover:bg-white/10 hover:text-white'
-              }`}
+              onClick={() => { setIsRegisterModalOpen(true); setIsLoginModalOpen(false); }}
+              className="w-full border border-white/20 text-gray-300 font-bold tracking-[0.2em] text-[11px] uppercase py-4 px-6 hover:bg-white/5 transition-colors"
             >
-              <ClipboardList size={20} /> Kanban
+              Criar Conta
             </button>
-            <button 
-              onClick={() => setActiveTab('pomodoro')} 
-              className={`flex items-center gap-3 p-3 rounded-2xl transition-all duration-200 ${
-                activeTab === 'pomodoro' 
-                  ? 'bg-white/20 text-white border border-white/25' 
-                  : 'text-white/60 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <Timer size={20} /> Pomodoro
-            </button>
-          </nav>
+          </div>
+        </div>
 
-          <button 
-            onClick={() => setIsCreateModalOpen(true)} 
-            className="mt-4 flex items-center justify-center gap-2 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-2xl font-semibold transition-all border border-white/20 hover:border-white/30"
-          >
-            <Plus size={20} /> Nova Tarefa
-          </button>
+        <LoginModal 
+          isOpen={isLoginModalOpen} 
+          onClose={() => setIsLoginModalOpen(false)} 
+          onSwitchToRegister={() => {
+            setIsLoginModalOpen(false);
+            setIsRegisterModalOpen(true);
+          }} 
+        />
+        <RegisterModal 
+          isOpen={isRegisterModalOpen} 
+          onClose={() => setIsRegisterModalOpen(false)} 
+          onSwitchToLogin={() => {
+            setIsRegisterModalOpen(false);
+            setIsLoginModalOpen(true);
+          }} 
+        />
+      </div>
+    );
+  }
 
-          <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-2 truncate">
-              <div className="w-8 h-8 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-[10px] font-bold text-white uppercase">
-                {user.name.charAt(0)}
-              </div>
-              <span className="text-xs font-medium text-white/70 truncate">{user.name}</span>
+  return (
+    <div className="flex h-screen bg-[#000000] overflow-hidden text-slate-300 font-sans">
+      
+      {/* SIDEBAR */}
+      <aside className="hidden lg:flex flex-col flex-shrink-0 bg-[#0A0A0A] w-64 h-full border-r border-white/10 z-30">
+        <div className="flex h-16 border-b border-white/10 px-6 items-center gap-3">
+          <CheckSquare className="text-white" size={20} />
+          <span className="text-sm font-medium tracking-tight text-white font-manrope">TaskFlow Pro</span>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-6 hide-scrollbar">
+          <div>
+            <p className="px-3 text-xs font-medium text-gray-500 mb-2 font-mono uppercase tracking-wider">Overview</p>
+            <div className="space-y-0.5">
+              <button 
+                onClick={() => setActiveTab('dashboard')} 
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === 'dashboard' 
+                    ? 'bg-white/10 text-gray-100' 
+                    : 'text-gray-400 hover:text-gray-100 hover:bg-white/5'
+                }`}
+              >
+                <LayoutDashboard size={16} />
+                <span className="text-[13px] font-medium">Dashboard</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('kanban')} 
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === 'kanban' 
+                    ? 'bg-white/10 text-gray-100' 
+                    : 'text-gray-400 hover:text-gray-100 hover:bg-white/5'
+                }`}
+              >
+                <ClipboardList size={16} />
+                <span className="text-[13px] font-medium">Kanban Board</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('pomodoro')} 
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === 'pomodoro' 
+                    ? 'bg-white/10 text-gray-100' 
+                    : 'text-gray-400 hover:text-gray-100 hover:bg-white/5'
+                }`}
+              >
+                <Timer size={16} />
+                <span className="text-[13px] font-medium">Pomodoro Timer</span>
+              </button>
             </div>
-            <button onClick={logout} className="text-white/40 hover:text-white/80 transition-colors">
-              <LogOut size={18} />
+          </div>
+        </nav>
+
+        <div className="p-4 border-t border-white/10">
+          <div className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+            <div className="w-8 h-8 rounded-full bg-blue-600 border border-white/10 flex items-center justify-center text-[10px] font-bold text-white uppercase font-mono">
+              {user.name.charAt(0)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-medium text-gray-200 truncate">{user.name}</p>
+              <p className="text-[11px] text-gray-500 truncate">Workspace User</p>
+            </div>
+            <button onClick={logout} className="text-gray-500 hover:text-red-400 transition-colors">
+              <LogOut size={14} />
             </button>
           </div>
         </div>
       </aside>
 
       {/* CONTEÚDO PRINCIPAL */}
-      <main className="flex-1 flex flex-col gap-6 min-w-0 overflow-x-visible">
-        <header className="flex flex-col gap-1 px-1">
-          <p className="text-white/50 text-xs font-bold tracking-[0.2em] uppercase">Overview</p>
-          <h2 className="text-3xl font-black text-white uppercase tracking-tight">
-            {activeTab === 'kanban' ? 'Quadro de Tarefas' : activeTab === 'dashboard' ? 'Performance' : 'Timer'}
-          </h2>
+      <main className="flex-1 flex flex-col min-w-0 bg-[#000000] relative">
+        <header className="h-16 flex items-center justify-between px-6 lg:px-8 border-b border-white/10 bg-[#000000]/90 backdrop-blur-xl sticky top-0 z-20">
+          <div className="flex items-center gap-2 text-[13px] text-gray-400 font-mono">
+            <span className="hover:text-gray-100 cursor-pointer transition-colors">Workspace</span>
+            <span>/</span>
+            <span className="text-gray-100 font-medium">
+              {activeTab === 'kanban' ? 'Kanban' : activeTab === 'dashboard' ? 'Dashboard' : 'Timer'}
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="group relative inline-flex items-center gap-2 bg-blue-600 px-4 py-2 text-[11px] font-bold tracking-[0.2em] text-white transition-all hover:bg-blue-500 font-sans uppercase rounded-none"
+            >
+              <Plus size={14} className="relative z-10 transition-transform duration-300 group-hover:rotate-90" />
+              <span className="relative z-10 hidden sm:inline">Nova Tarefa</span>
+            </button>
+            <div className="hidden sm:flex items-center bg-white/[0.03] border border-white/10 rounded-md px-3 py-1.5 focus-within:border-white/20 transition-all w-64 group">
+              <Search className="text-gray-500 mr-2" size={14} />
+              <input className="bg-transparent border-none outline-none text-[13px] text-gray-200 w-full placeholder:text-gray-600" placeholder="Search tasks..." type="text" />
+              <span className="text-[10px] font-medium text-gray-500 border border-white/10 rounded px-1.5 py-0.5">/</span>
+            </div>
+            <button className="w-8 h-8 rounded-full border border-white/10 bg-white/[0.02] flex items-center justify-center hover:bg-white/[0.05] transition-colors relative">
+              <span className="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full border-2 border-[#000000]"></span>
+              <Bell className="text-gray-400" size={14} />
+            </button>
+          </div>
         </header>
 
-        {/* Ajuste de Padding e Scroll para evitar o corte */}
-        <section className="flex-1 overflow-y-auto overflow-x-visible px-1 py-2 custom-scrollbar">
-          <div key={activeTab} className="animate-container fade-transition animate-in">
+        <div className="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6 hide-scrollbar relative z-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 animate-in">
+            <div>
+              <h1 className="text-2xl tracking-tight text-gray-100 font-medium mb-1 font-manrope">
+                {activeTab === 'kanban' ? 'Task Board' : activeTab === 'dashboard' ? 'Performance Insights' : 'Focus Timer'}
+              </h1>
+              <div className="flex items-center gap-2 text-[13px] text-gray-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                System operating normally
+              </div>
+            </div>
+          </div>
+
+          <div key={activeTab} className="animate-in min-h-full flex flex-col">
             {isLoading ? (
               <div className="h-full flex items-center justify-center min-h-[400px]">
-                <div className="text-white/50 animate-pulse font-mono tracking-widest text-sm uppercase">
-                  Sincronizando...
+                <div className="text-gray-500 animate-pulse font-mono tracking-widest text-sm uppercase">
+                  Loading data...
                 </div>
               </div>
             ) : activeTab === 'kanban' ? (
-              <div className="kanban-board-container overflow-x-visible">
+              <div className="h-full">
                 <KanbanBoard 
                   tasks={tasks} 
                   onTaskMove={handleTaskMove} 
@@ -203,43 +297,37 @@ function AppContent() {
                 />
               </div>
             ) : activeTab === 'pomodoro' ? (
-              <div className="glass-panel h-full p-6 md:p-8">
+              <div className="rounded-xl border border-white/10 bg-[#0A0A0A] p-6 lg:p-10 h-full min-h-[500px]">
                 <AdvancedPomodoro />
               </div>
             ) : activeTab === 'dashboard' ? (
-              <div className="flex flex-col gap-8 px-2 pb-10">
+              <div className="flex flex-col gap-6 pb-10">
                 <DashboardStats tasks={tasks} />
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="glass-panel p-6">
-                    <h3 className="text-xs font-bold text-white/60 mb-6 uppercase tracking-wider">
-                      Distribuição
-                    </h3>
-                    <ProductivityChart tasks={tasks} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="rounded-xl border border-white/10 bg-white/[0.01] p-6 flex flex-col">
+                    <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Task Distribution</h3>
+                    <div className="flex-1">
+                      <ProductivityChart tasks={tasks} />
+                    </div>
                   </div>
                   
-                  <div className="glass-panel p-6">
-                    <h3 className="text-xs font-bold text-white/60 mb-6 uppercase tracking-wider">
-                      Status
-                    </h3>
-                    <StatsOverview tasks={tasks} />
+                  <div className="rounded-xl border border-white/10 bg-white/[0.01] p-6 flex flex-col">
+                    <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Status Overview</h3>
+                    <div className="flex-1">
+                      <StatsOverview tasks={tasks} />
+                    </div>
                   </div>
                 </div>
 
-                <div className="glass-panel p-6">
-                  <h3 className="text-xs font-bold text-white/60 mb-6 uppercase tracking-wider">
-                    Eficiência
-                  </h3>
+                <div className="rounded-xl border border-white/10 bg-white/[0.01] p-6">
+                  <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Weekly Efficiency</h3>
                   <AnimatedCharts tasks={tasks} />
                 </div>
               </div>
-            ) : (
-              <div className="glass-panel p-10 h-full flex items-center justify-center border-dashed border-2 border-white/10 text-white/40 italic text-center">
-                Selecione uma opção no menu lateral.
-              </div>
-            )}
+            ) : null}
           </div>
-        </section>
+        </div>
       </main>
 
       <CreateTaskModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onAdd={handleAddTask} />

@@ -14,6 +14,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Interceptor para lidar com token expirado (401/403)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      localStorage.removeItem('@TaskFlow:token');
+      localStorage.removeItem('@TaskFlow:user');
+      window.location.reload();
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Service de Tarefas
 export const tasksService = {
   getAllTasks: async () => {

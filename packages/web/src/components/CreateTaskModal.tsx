@@ -12,16 +12,16 @@ interface CreateTaskModalProps {
 }
 
 const priorityOptions = [
-  { value: "low", label: "Baixa", color: "from-green-400 to-green-500", dotClassName: "bg-green-200" },
-  { value: "medium", label: "Média", color: "from-yellow-400 to-yellow-500", dotClassName: "bg-yellow-200" },
-  { value: "high", label: "Alta", color: "from-red-400 to-red-500", dotClassName: "bg-red-200" },
+  { value: "low", label: "Baixa", color: "bg-emerald-500", dotClassName: "bg-emerald-500" },
+  { value: "medium", label: "Média", color: "bg-amber-400", dotClassName: "bg-amber-400" },
+  { value: "high", label: "Alta", color: "bg-red-500", dotClassName: "bg-red-500" },
 ] as const;
 
 const categoryOptions = [
-  { value: "work", label: "Trabalho", color: "from-blue-400 to-blue-500" },
-  { value: "personal", label: "Pessoal", color: "from-purple-400 to-purple-500" },
-  { value: "learning", label: "Estudo", color: "from-green-400 to-green-500" },
-  { value: "health", label: "Saúde", color: "from-orange-400 to-orange-500" },
+  { value: "work", label: "Trabalho", color: "bg-blue-500" },
+  { value: "personal", label: "Pessoal", color: "bg-purple-500" },
+  { value: "learning", label: "Estudo", color: "bg-emerald-500" },
+  { value: "health", label: "Saúde", color: "bg-amber-400" },
 ] as const;
 
 const getPriorityLabel = (priority: TaskDraft["priority"]) => {
@@ -81,9 +81,7 @@ export function CreateTaskModal({
   }, [isOpen]);
 
   useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
+    if (!isOpen) return;
 
     if (editingTask) {
       const taskContent = editingTask.content || editingTask.description || "";
@@ -107,11 +105,7 @@ export function CreateTaskModal({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!formData.description.trim()) {
-      return;
-    }
-
+    if (!formData.description.trim()) return;
     setIsSubmitting(true);
 
     try {
@@ -133,7 +127,6 @@ export function CreateTaskModal({
           category: formData.category,
         });
       }
-
       resetForm();
       onClose();
     } finally {
@@ -142,15 +135,10 @@ export function CreateTaskModal({
   };
 
   const handleDelete = async () => {
-    if (!editingTask || !onDelete) {
-      return;
-    }
-
+    if (!editingTask || !onDelete) return;
     setIsDeleting(true);
-
     try {
       const deleted = await onDelete(editingTask.id);
-
       if (deleted) {
         resetForm();
         onClose();
@@ -163,44 +151,44 @@ export function CreateTaskModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 bg-[#000000]/80 backdrop-blur-sm transition-opacity duration-300"
         onClick={handleClose}
       />
 
       <div
         className={`
-          relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl
+          relative bg-[#0A0A0A] rounded-xl shadow-2xl
           max-w-md w-full transform transition-all duration-500
           ${isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0"}
-          border border-gray-200 dark:border-gray-700
+          border border-white/10
         `}
       >
-        <div className="relative p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="relative p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
-                <Sparkles className="h-5 w-5 text-white" />
+              <div className="p-2 bg-blue-600/20 border border-blue-500/30 rounded-xl">
+                <Sparkles className="h-4 w-4 text-blue-400" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-[13px] font-mono font-bold uppercase tracking-[0.2em] text-white">
                   {isEditMode ? "Editar Task" : "Nova Task"}
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Passo {step} de 3</p>
+                <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest mt-1">Passo {step} de 3</p>
               </div>
             </div>
             <button
               onClick={handleClose}
               disabled={isBusy}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 transform hover:scale-110 disabled:opacity-50"
+              className="p-2 hover:bg-white/5 border border-transparent hover:border-white/10 rounded-xl transition-all duration-200 disabled:opacity-50"
             >
-              <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <X className="h-4 w-4 text-gray-400" />
             </button>
           </div>
 
           <div className="mt-4">
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div className="w-full bg-white/5 rounded-full h-1">
               <div
-                className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500"
+                className="bg-blue-500 h-1 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
                 style={{ width: `${(step / 3) * 100}%` }}
               />
             </div>
@@ -211,15 +199,15 @@ export function CreateTaskModal({
           {step === 1 && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400 mb-3">
                   O que precisa ser feito?
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={event => setFormData({ ...formData, description: event.target.value })}
-                  placeholder="Descreva sua task de forma clara e objetiva..."
+                  placeholder="Descreva sua task..."
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
+                  className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] resize-none outline-none font-sans"
                   required
                   autoFocus
                   disabled={isBusy}
@@ -230,7 +218,7 @@ export function CreateTaskModal({
                 type="button"
                 onClick={nextStep}
                 disabled={!formData.description.trim() || isBusy}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:hover:scale-100"
+                className="w-full bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-3 px-4 transition-all duration-200 hover:bg-blue-500 disabled:opacity-50 font-sans"
               >
                 Continuar
               </button>
@@ -240,8 +228,8 @@ export function CreateTaskModal({
           {step === 2 && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  <Flag className="inline h-4 w-4 mr-2" />
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400 mb-3 flex items-center">
+                  <Flag className="h-3 w-3 mr-2" />
                   Prioridade
                 </label>
                 <div className="grid grid-cols-3 gap-3">
@@ -252,17 +240,17 @@ export function CreateTaskModal({
                       onClick={() => setFormData({ ...formData, priority: option.value })}
                       disabled={isBusy}
                       className={`
-                        p-3 rounded-xl border-2 transition-all duration-200 transform hover:scale-105 disabled:opacity-50
+                        p-3 rounded-md border transition-all duration-200 disabled:opacity-50
                         ${
                           formData.priority === option.value
-                            ? `border-transparent bg-gradient-to-r ${option.color} text-white shadow-lg`
-                            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-500"
+                            ? `border-${option.color.replace('bg-', '')} ${option.color} text-[#111] font-bold`
+                            : "border-white/10 bg-white/[0.02] text-gray-400 hover:bg-white/[0.04] hover:text-white"
                         }
                       `}
                     >
-                      <div className="text-center">
-                        <span className={`mb-2 inline-flex h-3 w-3 rounded-full ${option.dotClassName}`} />
-                        <div className="text-sm font-medium">{option.label}</div>
+                      <div className="text-center font-sans text-[11px] uppercase tracking-wider">
+                        <span className={`mb-2 inline-flex h-2 w-2 rounded-full ${formData.priority === option.value ? 'bg-[#111]' : option.dotClassName}`} />
+                        <div>{option.label}</div>
                       </div>
                     </button>
                   ))}
@@ -270,8 +258,8 @@ export function CreateTaskModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  <Zap className="inline h-4 w-4 mr-2" />
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400 mb-3 flex items-center">
+                  <Zap className="h-3 w-3 mr-2" />
                   Categoria
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -282,16 +270,16 @@ export function CreateTaskModal({
                       onClick={() => setFormData({ ...formData, category: option.value })}
                       disabled={isBusy}
                       className={`
-                        p-3 rounded-xl border-2 transition-all duration-200 transform hover:scale-105 disabled:opacity-50
+                        p-3 rounded-md border transition-all duration-200 disabled:opacity-50
                         ${
                           formData.category === option.value
-                            ? `border-transparent bg-gradient-to-r ${option.color} text-white shadow-lg`
-                            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-500"
+                            ? `border-${option.color.replace('bg-', '')} ${option.color} text-[#111] font-bold`
+                            : "border-white/10 bg-white/[0.02] text-gray-400 hover:bg-white/[0.04] hover:text-white"
                         }
                       `}
                     >
-                      <div className="text-center">
-                        <div className="text-sm font-medium">{option.label}</div>
+                      <div className="text-center font-sans text-[11px] uppercase tracking-wider">
+                        {option.label}
                       </div>
                     </button>
                   ))}
@@ -303,7 +291,7 @@ export function CreateTaskModal({
                   type="button"
                   onClick={prevStep}
                   disabled={isBusy}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
+                  className="flex-1 py-3 px-4 border border-white/20 text-white hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans"
                 >
                   Voltar
                 </button>
@@ -311,7 +299,7 @@ export function CreateTaskModal({
                   type="button"
                   onClick={nextStep}
                   disabled={isBusy}
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
+                  className="flex-1 bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-3 px-4 transition-all hover:bg-blue-500 disabled:opacity-50 font-sans"
                 >
                   Continuar
                 </button>
@@ -322,54 +310,36 @@ export function CreateTaskModal({
           {step === 3 && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  <Calendar className="inline h-4 w-4 mr-2" />
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400 mb-3 flex items-center">
+                  <Calendar className="h-3 w-3 mr-2" />
                   Data de Vencimento
                 </label>
                 <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
                   <input
                     type="date"
                     value={formData.dueDate}
                     onChange={event => setFormData({ ...formData, dueDate: event.target.value })}
                     disabled={isBusy}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full pl-10 pr-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Preview da Task</h4>
-                <p className="text-gray-700 dark:text-gray-300 text-sm">{formData.description}</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <span
-                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      formData.priority === "high"
-                        ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
-                        : formData.priority === "medium"
-                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
-                        : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-                    }`}
-                  >
+              <div className="bg-white/[0.02] rounded-xl p-4 border border-white/10">
+                <h4 className="text-[11px] font-mono text-gray-500 uppercase tracking-widest mb-2">Preview</h4>
+                <p className="text-gray-200 text-[13px] font-sans">{formData.description}</p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[10px] font-mono uppercase tracking-widest">
                     {getPriorityLabel(formData.priority)}
                   </span>
                   {formData.category && (
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        formData.category === "work"
-                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                          : formData.category === "personal"
-                          ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
-                          : formData.category === "learning"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-                          : "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
-                      }`}
-                    >
+                    <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[10px] font-mono uppercase tracking-widest">
                       {getCategoryLabel(formData.category)}
                     </span>
                   )}
                   {formData.dueDate && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                    <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[10px] font-mono uppercase tracking-widest">
                       {new Date(formData.dueDate).toLocaleDateString("pt-BR")}
                     </span>
                   )}
@@ -377,16 +347,16 @@ export function CreateTaskModal({
               </div>
 
               {isEditMode && (
-                <div className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-950/30">
+                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3">
-                      <div className="rounded-xl bg-red-100 p-2 text-red-600 dark:bg-red-900/40 dark:text-red-300">
-                        <AlertTriangle className="h-5 w-5" />
+                      <div className="rounded-md bg-red-500/10 border border-red-500/20 p-2 text-red-400">
+                        <AlertTriangle className="h-4 w-4" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-red-700 dark:text-red-300">Excluir task</h4>
-                        <p className="mt-1 text-sm text-red-600/80 dark:text-red-200/70">
-                          A confirmação acontece aqui no modal, sem usar resposta nativa do navegador.
+                        <h4 className="text-[11px] font-bold text-red-400 uppercase tracking-widest">Zona de Perigo</h4>
+                        <p className="mt-1 text-[11px] text-gray-500 font-sans">
+                          A exclusão não pode ser desfeita.
                         </p>
                       </div>
                     </div>
@@ -394,24 +364,24 @@ export function CreateTaskModal({
                       type="button"
                       onClick={() => setIsDeleteConfirmVisible(prev => !prev)}
                       disabled={!onDelete || isBusy}
-                      className="inline-flex items-center gap-2 rounded-xl border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-all duration-200 hover:bg-red-50 disabled:opacity-50 dark:border-red-800/60 dark:bg-red-950/20 dark:text-red-300 dark:hover:bg-red-950/40"
+                      className="inline-flex items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-[11px] font-bold tracking-widest uppercase text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 w-3" />
                       Excluir
                     </button>
                   </div>
 
                   {isDeleteConfirmVisible && (
-                    <div className="mt-4 rounded-2xl border border-red-200 bg-white/80 p-4 dark:border-red-900/40 dark:bg-black/20">
-                      <p className="text-sm text-slate-700 dark:text-slate-200">
-                        Tem certeza que deseja excluir esta task? Essa ação não pode ser desfeita.
+                    <div className="mt-4 border-t border-red-500/20 pt-4">
+                      <p className="text-[11px] text-gray-400 font-sans">
+                        Tem certeza que deseja excluir esta task?
                       </p>
-                      <div className="mt-4 flex gap-3">
+                      <div className="mt-3 flex gap-3">
                         <button
                           type="button"
                           onClick={() => setIsDeleteConfirmVisible(false)}
                           disabled={isBusy}
-                          className="flex-1 rounded-xl border border-gray-300 px-4 py-3 font-medium text-gray-700 transition-all duration-200 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                          className="flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-bold tracking-widest uppercase text-gray-400 hover:bg-white/10 transition-colors"
                         >
                           Cancelar
                         </button>
@@ -419,9 +389,9 @@ export function CreateTaskModal({
                           type="button"
                           onClick={handleDelete}
                           disabled={!onDelete || isBusy}
-                          className="flex-1 rounded-xl bg-gradient-to-r from-red-500 to-red-600 px-4 py-3 font-semibold text-white shadow-lg shadow-red-500/20 transition-all duration-200 hover:scale-[1.01] disabled:opacity-50"
+                          className="flex-1 rounded-md bg-red-500 px-3 py-2 text-[10px] font-bold tracking-widest uppercase text-[#111] hover:bg-red-400 transition-colors"
                         >
-                          {isDeleting ? "Excluindo..." : "Confirmar exclusão"}
+                          {isDeleting ? "Excluindo..." : "Confirmar"}
                         </button>
                       </div>
                     </div>
@@ -434,16 +404,16 @@ export function CreateTaskModal({
                   type="button"
                   onClick={prevStep}
                   disabled={isBusy}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
+                  className="flex-1 py-3 px-4 border border-white/20 text-white hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
                 >
                   Voltar
                 </button>
                 <button
                   type="submit"
                   disabled={isBusy}
-                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:transform-none"
+                  className="flex-1 bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-3 px-4 transition-all hover:bg-blue-500 disabled:opacity-50 font-sans rounded-none"
                 >
-                  {isSubmitting ? "Salvando..." : isEditMode ? "Salvar Task" : "Criar Task"}
+                  {isSubmitting ? "..." : isEditMode ? "Salvar Task" : "Criar Task"}
                 </button>
               </div>
             </div>

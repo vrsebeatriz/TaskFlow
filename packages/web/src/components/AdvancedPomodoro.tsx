@@ -7,7 +7,6 @@ import {
   VolumeX,
   Target,
   Settings,
-  Brain,
   Coffee,
   TimerReset,
   X,
@@ -58,28 +57,28 @@ export function AdvancedPomodoro() {
       time: settings.focusTime * 60,
       label: "Foco",
       description: "Bloco profundo para executar sem interrupções.",
-      chipClassName: "from-cyan-500 to-blue-500 text-white shadow-[0_18px_40px_rgba(34,211,238,0.22)]",
-      panelClassName: "border-cyan-500/20 bg-cyan-500/[0.08]",
-      strokeFrom: "#22d3ee",
-      strokeTo: "#3b82f6",
+      chipClassName: "border-blue-500 bg-blue-500/10 text-white shadow-lg",
+      panelClassName: "border-blue-500/20 bg-blue-500/[0.02]",
+      strokeFrom: "#3b82f6",
+      strokeTo: "#2563eb",
     },
     short: {
       time: settings.shortBreak * 60,
       label: "Pausa Curta",
       description: "Recupere energia antes de voltar para a próxima entrega.",
-      chipClassName: "from-emerald-500 to-teal-500 text-white shadow-[0_18px_40px_rgba(16,185,129,0.22)]",
-      panelClassName: "border-emerald-500/20 bg-emerald-500/[0.08]",
-      strokeFrom: "#34d399",
-      strokeTo: "#14b8a6",
+      chipClassName: "border-emerald-500 bg-emerald-500/10 text-white shadow-lg",
+      panelClassName: "border-emerald-500/20 bg-emerald-500/[0.02]",
+      strokeFrom: "#10b981",
+      strokeTo: "#059669",
     },
     long: {
       time: settings.longBreak * 60,
       label: "Pausa Longa",
       description: "Desacelere um pouco mais para manter consistência ao longo do dia.",
-      chipClassName: "from-fuchsia-500 to-purple-500 text-white shadow-[0_18px_40px_rgba(168,85,247,0.22)]",
-      panelClassName: "border-fuchsia-500/20 bg-fuchsia-500/[0.08]",
-      strokeFrom: "#d946ef",
-      strokeTo: "#8b5cf6",
+      chipClassName: "border-purple-500 bg-purple-500/10 text-white shadow-lg",
+      panelClassName: "border-purple-500/20 bg-purple-500/[0.02]",
+      strokeFrom: "#a855f7",
+      strokeTo: "#7e22ce",
     },
   };
 
@@ -161,7 +160,7 @@ export function AdvancedPomodoro() {
   const totalFocusedMinutes = sessions * settings.focusTime;
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-full flex flex-col">
       {showConfetti && <Confetti recycle={false} numberOfPieces={180} />}
 
       <audio
@@ -169,41 +168,37 @@ export function AdvancedPomodoro() {
         src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"
       />
 
-      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
-        <section className="glass-panel overflow-hidden border-white/10">
-          <div className="border-b border-white/5 bg-white/[0.02] p-6 md:p-8">
+      <div className="flex-1 grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)] min-h-full">
+        <section className="rounded-xl border border-white/10 bg-white/[0.02] flex flex-col overflow-hidden transition-colors min-h-full">
+          <div className="border-b border-white/10 p-6">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 shadow-[0_18px_35px_rgba(34,211,238,0.22)]">
-                    <Target className="h-5 w-5 text-white" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600/20 border border-blue-500/30">
+                    <Target className="h-5 w-5 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
+                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
                       Focus System
                     </p>
-                    <h3 className="text-2xl font-black tracking-tight text-slate-50">
+                    <h3 className="text-xl font-manrope font-bold text-gray-100">
                       Pomodoro
                     </h3>
                   </div>
                 </div>
-                <p className="max-w-2xl text-sm leading-6 text-slate-400">
-                  O relógio Pomodoro ajuda a organizar blocos de foco com pausas estratégicas,
-                  melhorando a concentração e evitando desgaste ao longo do trabalho.
-                </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={() => setSoundEnabled(current => !current)}
-                  className={`rounded-2xl border px-4 py-3 transition-all duration-200 ${
+                  className={`rounded-md border px-4 py-2 transition-all duration-200 font-sans ${
                     soundEnabled
-                      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
-                      : "border-white/10 bg-white/5 text-slate-400 hover:bg-white/10"
+                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                      : "border-white/10 bg-white/5 text-gray-400 hover:bg-white/10"
                   }`}
                 >
-                  <span className="flex items-center gap-2 text-sm font-semibold">
+                  <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
                     {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                     {soundEnabled ? "Som Ativo" : "Som Off"}
                   </span>
@@ -212,123 +207,46 @@ export function AdvancedPomodoro() {
                 <button
                   type="button"
                   onClick={() => setShowSettings(true)}
-                  className="rounded-2xl border border-cyan-400/25 bg-cyan-500/10 px-4 py-3 text-cyan-300 transition-all duration-200 hover:bg-cyan-500/15"
+                  className="rounded-md border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-blue-400 transition-all duration-200 hover:bg-blue-500/20"
                 >
-                  <span className="flex items-center gap-2 text-sm font-semibold">
+                  <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest font-sans">
                     <Settings className="h-4 w-4" />
-                    Ajustar Ciclos
+                    Ajustar
                   </span>
                 </button>
-
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-fuchsia-500/15 text-fuchsia-300">
-                      <Brain className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">
-                        Sessões
-                      </p>
-                      <p className="text-base font-bold text-slate-100">{sessions}</p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
 
-          <div className="grid gap-8 p-6 md:p-8 xl:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] xl:items-center">
-            <div className="min-w-0 space-y-6">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-2 min-[1800px]:grid-cols-3">
-                {(Object.keys(modes) as ModeKey[]).map(key => {
-                  const currentMode = modes[key];
-                  const isActive = mode === key;
+          <div className="flex-1 p-6 flex flex-col justify-between">
+            <div className="grid gap-3 sm:grid-cols-3 mb-8">
+              {(Object.keys(modes) as ModeKey[]).map(key => {
+                const currentMode = modes[key];
+                const isActive = mode === key;
 
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => switchMode(key)}
-                      className={[
-                        "min-h-[138px] rounded-2xl border px-4 py-4 text-left transition-all duration-200",
-                        isActive
-                          ? `bg-gradient-to-r ${currentMode.chipClassName}`
-                          : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/20 hover:bg-white/[0.06]",
-                      ].join(" ")}
-                    >
-                      <div className="flex h-full flex-col justify-between gap-3">
-                        <p className="text-sm font-bold">{currentMode.label}</p>
-                        <p
-                          className={`text-xs leading-5 ${
-                            isActive ? "text-white/85" : "text-slate-500"
-                          }`}
-                        >
-                          {currentMode.description}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className={`rounded-[28px] border p-5 md:p-6 ${modes[mode].panelClassName}`}>
-                <div className="grid gap-4 min-[1700px]:grid-cols-[minmax(0,1fr)_240px] min-[1700px]:items-start">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                      Estado Atual
-                    </p>
-                    <h4 className="mt-2 text-2xl font-bold text-slate-50">{modes[mode].label}</h4>
-                    <p className="mt-1 text-sm text-slate-400">{modes[mode].description}</p>
-                  </div>
-
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/35 px-4 py-3 min-[1700px]:self-start">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">
-                      Próxima troca
-                    </p>
-                    <p className="mt-1 text-sm font-semibold text-slate-200">
-                      {mode === "focus"
-                        ? `após ${settings.sessionsUntilLongBreak} blocos, pausa longa`
-                        : "volta automaticamente para foco"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                {!isRunning ? (
+                return (
                   <button
+                    key={key}
                     type="button"
-                    onClick={startTimer}
-                    className="inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-4 text-sm font-bold text-white shadow-[0_18px_36px_rgba(16,185,129,0.25)] transition-all duration-200 hover:scale-[1.02]"
+                    onClick={() => switchMode(key)}
+                    className={[
+                      "min-h-[100px] rounded-xl border p-4 text-left transition-all duration-200 flex flex-col justify-between gap-2",
+                      isActive
+                        ? currentMode.chipClassName
+                        : "border-white/10 bg-white/[0.03] text-gray-400 hover:border-white/20 hover:bg-white/[0.06]",
+                    ].join(" ")}
                   >
-                    <Play className="h-5 w-5" />
-                    Iniciar ciclo
+                    <p className="text-[11px] font-mono font-bold uppercase tracking-widest">{currentMode.label}</p>
+                    <p className={`text-[11px] font-sans leading-relaxed ${isActive ? "text-white/80" : "text-gray-500"}`}>
+                      {currentMode.description}
+                    </p>
                   </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={pauseTimer}
-                    className="inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-4 text-sm font-bold text-slate-950 shadow-[0_18px_36px_rgba(245,158,11,0.24)] transition-all duration-200 hover:scale-[1.02]"
-                  >
-                    <Pause className="h-5 w-5" />
-                    Pausar ciclo
-                  </button>
-                )}
-
-                <button
-                  type="button"
-                  onClick={resetTimer}
-                  className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-4 text-sm font-bold text-slate-200 transition-all duration-200 hover:border-white/20 hover:bg-white/[0.08]"
-                >
-                  <RotateCcw className="h-5 w-5" />
-                  Reiniciar
-                </button>
-              </div>
+                );
+              })}
             </div>
 
-            <div className="relative mx-auto flex w-full max-w-[320px] items-center justify-center xl:max-w-[300px] 2xl:max-w-[320px]">
-              <div className="absolute inset-8 rounded-full bg-cyan-500/10 blur-3xl" />
-              <div className="relative flex h-[260px] w-[260px] items-center justify-center rounded-full border border-white/10 bg-slate-950/45 shadow-[0_24px_60px_rgba(2,6,23,0.38)] sm:h-[290px] sm:w-[290px]">
+            <div className="relative mx-auto flex w-full max-w-[320px] items-center justify-center flex-1 my-8">
+              <div className="relative flex h-[280px] w-[280px] items-center justify-center rounded-full">
                 <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
                   <defs>
                     <linearGradient id="pomodoro-ring" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -341,8 +259,8 @@ export function AdvancedPomodoro() {
                     cy="50"
                     r="45"
                     fill="none"
-                    stroke="rgba(148,163,184,0.16)"
-                    strokeWidth="6"
+                    stroke="rgba(255,255,255,0.05)"
+                    strokeWidth="4"
                   />
                   <circle
                     cx="50"
@@ -350,7 +268,7 @@ export function AdvancedPomodoro() {
                     r="45"
                     fill="none"
                     stroke="url(#pomodoro-ring)"
-                    strokeWidth="6"
+                    strokeWidth="4"
                     strokeLinecap="round"
                     strokeDasharray={RING_CIRCUMFERENCE}
                     strokeDashoffset={progressOffset}
@@ -358,96 +276,116 @@ export function AdvancedPomodoro() {
                   />
                 </svg>
 
-                <div className="relative z-10 flex w-[78%] flex-col items-center rounded-full border border-white/10 bg-slate-950/55 px-4 py-8 text-center backdrop-blur-xl sm:px-6 sm:py-10">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500">
-                    Timer
+                <div className="relative z-10 flex flex-col items-center text-center">
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">
+                    {modes[mode].label}
                   </p>
-                  <div className="mt-4 text-4xl font-black tracking-tight text-slate-50 sm:text-5xl">
+                  <div className="text-6xl font-manrope font-bold tracking-tighter text-gray-100">
                     {formatTime(timeLeft)}
                   </div>
-                  <div className="mt-3 text-sm font-semibold text-slate-300">
-                    {isRunning ? "Rodando agora" : "Pronto para começar"}
-                  </div>
-                  <div className="mt-2 text-xs text-slate-500">
-                    {mode === "focus"
-                      ? "Foco profundo"
-                      : mode === "short"
-                      ? "Respire e retorne"
-                      : "Recarga estendida"}
+                  <div className="mt-3 text-[11px] font-sans font-bold uppercase tracking-widest text-gray-400">
+                    {isRunning ? "Rodando" : "Pausado"}
                   </div>
                 </div>
               </div>
             </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-auto">
+              {!isRunning ? (
+                <button
+                  type="button"
+                  onClick={startTimer}
+                  className="inline-flex items-center gap-3 rounded-md bg-blue-600 px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-white transition-all hover:bg-blue-500 font-sans"
+                >
+                  <Play className="h-4 w-4" />
+                  Iniciar
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={pauseTimer}
+                  className="inline-flex items-center gap-3 rounded-md bg-amber-500 px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-[#111] transition-all hover:bg-amber-400 font-sans"
+                >
+                  <Pause className="h-4 w-4" />
+                  Pausar
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={resetTimer}
+                className="inline-flex items-center gap-3 rounded-md border border-white/20 bg-transparent px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-300 transition-all hover:bg-white/5 font-sans"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reset
+              </button>
+            </div>
           </div>
         </section>
 
-        <aside className="grid gap-6 xl:grid-cols-2 2xl:grid-cols-1">
-          <div className="glass-panel border-white/10 p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-fuchsia-500/15 text-fuchsia-300">
-                <TimerReset className="h-4 w-4" />
+        <aside className="flex flex-col gap-6">
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6 flex-1 hover:bg-white/[0.04] transition-colors">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/20">
+                <TimerReset className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
                   Ritmo do dia
                 </p>
-                <h4 className="text-lg font-bold text-slate-50">Métricas da sessão</h4>
+                <h4 className="text-sm font-manrope font-bold text-gray-100">Métricas</h4>
               </div>
             </div>
 
-            <div className="mt-6 space-y-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-sm text-slate-400">Blocos concluídos</p>
-                <p className="mt-2 text-3xl font-black text-slate-50">{sessions}</p>
+            <div className="space-y-3">
+              <div className="rounded-md border border-white/10 bg-white/[0.01] p-4 flex justify-between items-center">
+                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500">Blocos concluídos</p>
+                <p className="text-xl font-manrope font-bold text-gray-100">{sessions}</p>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-sm text-slate-400">Tempo focado</p>
-                <p className="mt-2 text-2xl font-bold text-slate-50">
+              <div className="rounded-md border border-white/10 bg-white/[0.01] p-4 flex justify-between items-center">
+                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500">Tempo focado</p>
+                <p className="text-xl font-manrope font-bold text-gray-100">
                   {Math.floor(totalFocusedMinutes / 60)}h {totalFocusedMinutes % 60}m
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-sm text-slate-400">Ciclo atual</p>
-                <p className="mt-2 text-xl font-bold text-slate-50">{modes[mode].label}</p>
+              <div className="rounded-md border border-white/10 bg-white/[0.01] p-4 flex justify-between items-center">
+                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500">Ciclo atual</p>
+                <p className="text-xl font-manrope font-bold text-gray-100">{modes[mode].label}</p>
               </div>
             </div>
           </div>
 
-          <div className="glass-panel border-white/10 p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300">
-                <Coffee className="h-4 w-4" />
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6 flex-1 hover:bg-white/[0.04] transition-colors">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                <Coffee className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  Configuração ativa
+                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
+                  Setup atual
                 </p>
-                <h4 className="text-lg font-bold text-slate-50">Seu setup atual</h4>
+                <h4 className="text-sm font-manrope font-bold text-gray-100">Configuração</h4>
               </div>
             </div>
 
-            <div className="mt-6 grid gap-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Foco</p>
-                <p className="mt-1 text-lg font-bold text-slate-100">{settings.focusTime} min</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-md border border-white/10 bg-white/[0.01] p-3 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Foco</p>
+                <p className="mt-1 text-lg font-manrope font-bold text-gray-100">{settings.focusTime}m</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Pausa curta</p>
-                <p className="mt-1 text-lg font-bold text-slate-100">{settings.shortBreak} min</p>
+              <div className="rounded-md border border-white/10 bg-white/[0.01] p-3 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Curta</p>
+                <p className="mt-1 text-lg font-manrope font-bold text-gray-100">{settings.shortBreak}m</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Pausa longa</p>
-                <p className="mt-1 text-lg font-bold text-slate-100">{settings.longBreak} min</p>
+              <div className="rounded-md border border-white/10 bg-white/[0.01] p-3 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Longa</p>
+                <p className="mt-1 text-lg font-manrope font-bold text-gray-100">{settings.longBreak}m</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
-                  Longa a cada
-                </p>
-                <p className="mt-1 text-lg font-bold text-slate-100">
-                  {settings.sessionsUntilLongBreak} sessões
-                </p>
+              <div className="rounded-md border border-white/10 bg-white/[0.01] p-3 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Repete</p>
+                <p className="mt-1 text-lg font-manrope font-bold text-gray-100">{settings.sessionsUntilLongBreak}x</p>
               </div>
             </div>
           </div>
@@ -457,27 +395,27 @@ export function AdvancedPomodoro() {
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-[#000000]/80 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setShowSettings(false)}
           />
-          <div className="glass-panel relative z-10 w-full max-w-lg border-cyan-500/20 shadow-[0_0_60px_rgba(34,211,238,0.12)]">
-            <div className="flex items-center justify-between border-b border-white/5 bg-white/[0.02] p-6">
+          <div className="relative z-10 w-full max-w-md rounded-xl border border-white/10 bg-[#0A0A0A] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/10 p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 text-white">
-                  <Settings className="h-4 w-4" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600/20 border border-blue-500/30">
+                  <Settings className="h-5 w-5 text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
                     Personalização
                   </p>
-                  <h4 className="text-lg font-bold text-slate-50">Configurações do Timer</h4>
+                  <h4 className="text-[13px] font-mono font-bold uppercase tracking-[0.2em] text-white mt-1">Opções do Timer</h4>
                 </div>
               </div>
 
               <button
                 type="button"
                 onClick={() => setShowSettings(false)}
-                className="rounded-full p-2 text-slate-500 transition-colors hover:bg-white/5 hover:text-white"
+                className="rounded-md p-2 text-gray-500 hover:bg-white/5 hover:text-white transition-colors border border-transparent hover:border-white/10"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -485,7 +423,7 @@ export function AdvancedPomodoro() {
 
             <div className="grid gap-5 p-6">
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-300">Tempo de foco</label>
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400">Tempo de foco</label>
                 <input
                   type="number"
                   min="1"
@@ -497,13 +435,13 @@ export function AdvancedPomodoro() {
                       focusTime: Math.max(1, Math.min(60, parseInt(event.target.value, 10) || 25)),
                     }))
                   }
-                  className="w-full"
+                  className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
                 />
               </div>
 
               <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-300">Pausa curta</label>
+                  <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400">Pausa curta</label>
                   <input
                     type="number"
                     min="1"
@@ -518,12 +456,12 @@ export function AdvancedPomodoro() {
                         ),
                       }))
                     }
-                    className="w-full"
+                    className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-300">Pausa longa</label>
+                  <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400">Pausa longa</label>
                   <input
                     type="number"
                     min="1"
@@ -538,13 +476,13 @@ export function AdvancedPomodoro() {
                         ),
                       }))
                     }
-                    className="w-full"
+                    className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-300">
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400">
                   Sessões até a pausa longa
                 </label>
                 <input
@@ -561,7 +499,7 @@ export function AdvancedPomodoro() {
                       ),
                     }))
                   }
-                  className="w-full"
+                  className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
                 />
               </div>
 
@@ -569,14 +507,14 @@ export function AdvancedPomodoro() {
                 <button
                   type="button"
                   onClick={() => setShowSettings(false)}
-                  className="btn-secondary flex-1"
+                  className="flex-1 py-3 px-4 border border-white/20 text-white hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
                 >
                   Fechar
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowSettings(false)}
-                  className="btn-primary flex-1"
+                  className="flex-1 bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-3 px-4 transition-all hover:bg-blue-500 font-sans rounded-none"
                 >
                   Aplicar
                 </button>

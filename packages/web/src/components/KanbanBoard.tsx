@@ -21,8 +21,8 @@ interface KanbanBoardProps {
 const columnOrder: Task['status'][] = ['pending', 'inProgress', 'completed'];
 
 const columns: { id: Task['status']; title: string; color: string }[] = [
-  { id: 'pending', title: 'Para Fazer', color: 'bg-cyan-500' },
-  { id: 'inProgress', title: 'Em Curso', color: 'bg-purple-500' },
+  { id: 'pending', title: 'Para Fazer', color: 'bg-blue-500' },
+  { id: 'inProgress', title: 'Em Curso', color: 'bg-amber-400' },
   { id: 'completed', title: 'Concluído', color: 'bg-emerald-500' },
 ];
 
@@ -168,18 +168,18 @@ function KanbanBoard({ tasks, onTaskMove, onEditTask }: KanbanBoardProps) {
         {columns.map(column => (
           <div
             key={column.id}
-            className="glass-panel flex min-h-[500px] flex-col overflow-visible border-white/5 bg-white/[0.01] transition-[border-color,box-shadow,background-color] duration-200"
+            className="rounded-xl flex min-h-[500px] flex-col overflow-visible border border-white/10 bg-[#0A0A0A] transition-[border-color,box-shadow,background-color] duration-200"
           >
-            <div className="flex items-center justify-between border-b border-white/5 p-5">
+            <div className="flex items-center justify-between border-b border-white/10 p-5">
               <div className="flex items-center gap-3">
                 <div
-                  className={`h-6 w-1.5 rounded-full ${column.color} shadow-[0_0_10px_rgba(255,255,255,0.2)]`}
+                  className={`h-4 w-4 rounded-full ${column.color} opacity-80`}
                 />
-                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-100">
+                <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-white">
                   {column.title}
                 </h3>
               </div>
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-400">
+              <span className="rounded-md border border-white/10 bg-white/5 px-2.5 py-0.5 text-[10px] font-mono text-slate-400">
                 {tasksByColumn[column.id].length}
               </span>
             </div>

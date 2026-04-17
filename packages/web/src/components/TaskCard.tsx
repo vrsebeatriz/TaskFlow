@@ -25,9 +25,10 @@ const TaskCard = memo(function TaskCard({
   return (
     <div
       className={[
-        'glass-panel border p-5',
+        'rounded-xl border p-5',
         'transition-[transform,border-color,box-shadow,background-color,opacity] duration-200 ease-out',
         'transform-gpu will-change-transform',
+        'bg-white/[0.02] hover:bg-white/[0.04]',
         priorityColors[task.priority],
         isElevated
           ? 'scale-[1.015] border-white/20 shadow-[0_20px_50px_rgba(2,6,23,0.42)]'
@@ -36,25 +37,25 @@ const TaskCard = memo(function TaskCard({
       ].join(' ')}
     >
       <div className="flex items-center justify-between gap-4 mb-4">
-        <h4 className="text-lg font-semibold text-slate-100 tracking-tight line-clamp-2">
+        <h4 className="text-[13px] font-medium text-gray-200 tracking-tight line-clamp-2">
           {task.description}
         </h4>
-        <ChevronRight className="text-slate-600 shrink-0" size={20} />
+        <ChevronRight className="text-gray-600 shrink-0" size={16} />
       </div>
 
-      <div className="flex items-center justify-between gap-2 text-xs text-slate-400 border-t border-white/5 pt-4">
+      <div className="flex items-center justify-between gap-2 text-xs text-slate-400 border-t border-white/5 pt-4 font-mono">
         <div className="flex min-w-0 items-center gap-3">
           {task.dueDate && (
             <span className="flex items-center gap-1.5 shrink-0">
-              <Calendar size={14} className="text-cyan-400" />
+              <Calendar size={12} className="text-gray-500" />
               {new Date(task.dueDate).toLocaleDateString(undefined, {
                 month: 'short',
                 day: 'numeric',
               })}
             </span>
           )}
-          <span className="flex min-w-0 items-center gap-1.5 uppercase tracking-wider font-medium text-slate-500">
-            <Tag size={14} className="shrink-0" />
+          <span className="flex min-w-0 items-center gap-1.5 uppercase tracking-[0.1em] text-[10px] text-gray-500">
+            <Tag size={12} className="shrink-0" />
             <span className="truncate">{task.category}</span>
           </span>
         </div>
