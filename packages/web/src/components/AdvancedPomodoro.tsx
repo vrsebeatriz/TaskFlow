@@ -32,7 +32,7 @@ export function AdvancedPomodoro() {
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [showSettings, setShowSettings] = useState<boolean>(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   const [settings, setSettings] = useState<PomodoroSettings>({
     focusTime: 25,
@@ -104,11 +104,79 @@ export function AdvancedPomodoro() {
     setTimeLeft(modes[mode].time);
   }, [settings, mode]);
 
+  useEffect(() => {
+    return () => {
+      if (audioContextRef.current && audioContextRef.current.state !== "closed") {
+        void audioContextRef.current.close();
+      }
+    };
+  }, []);
+
+  const getAudioContextConstructor = () => {
+    const contextWindow = window as Window & typeof globalThis & {
+      webkitAudioContext?: typeof AudioContext;
+    };
+
+    return window.AudioContext ?? contextWindow.webkitAudioContext ?? null;
+  };
+
+  const ensureAudioContext = async () => {
+    const AudioContextConstructor = getAudioContextConstructor();
+
+    if (!AudioContextConstructor) {
+      return null;
+    }
+
+    if (!audioContextRef.current || audioContextRef.current.state === "closed") {
+      audioContextRef.current = new AudioContextConstructor();
+    }
+
+    if (audioContextRef.current.state === "suspended") {
+      await audioContextRef.current.resume();
+    }
+
+    return audioContextRef.current;
+  };
+
+  const playAlarmTone = async () => {
+    const audioContext = await ensureAudioContext();
+
+    if (!audioContext) {
+      return;
+    }
+
+    const tonePattern = [
+      { offset: 0, duration: 0.18, frequency: 880 },
+      { offset: 0.24, duration: 0.18, frequency: 740 },
+      { offset: 0.48, duration: 0.26, frequency: 988 },
+    ];
+
+    tonePattern.forEach(({ offset, duration, frequency }) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      const startTime = audioContext.currentTime + offset;
+      const endTime = startTime + duration;
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+
+      gainNode.gain.setValueAtTime(0.0001, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.18, startTime + 0.02);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, endTime);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.start(startTime);
+      oscillator.stop(endTime + 0.02);
+    });
+  };
+
   const handleTimerComplete = () => {
     setIsRunning(false);
 
-    if (soundEnabled && audioRef.current) {
-      void audioRef.current.play().catch(() => {});
+    if (soundEnabled) {
+      void playAlarmTone();
     }
 
     if (mode === "focus") {
@@ -133,7 +201,13 @@ export function AdvancedPomodoro() {
     setTimeLeft(modes.focus.time);
   };
 
-  const startTimer = () => setIsRunning(true);
+  const startTimer = () => {
+    if (soundEnabled) {
+      void ensureAudioContext();
+    }
+
+    setIsRunning(true);
+  };
 
   const pauseTimer = () => setIsRunning(false);
 
@@ -146,6 +220,20 @@ export function AdvancedPomodoro() {
     setIsRunning(false);
     setMode(newMode);
     setTimeLeft(modes[newMode].time);
+  };
+
+  const handleSoundToggle = () => {
+    const nextValue = !soundEnabled;
+
+    setSoundEnabled(nextValue);
+
+    if (nextValue) {
+      void ensureAudioContext();
+    }
+  };
+
+  const testSound = () => {
+    void playAlarmTone();
   };
 
   const formatTime = (seconds: number) => {
@@ -162,11 +250,6 @@ export function AdvancedPomodoro() {
   return (
     <div className="w-full min-h-full flex flex-col">
       {showConfetti && <Confetti recycle={false} numberOfPieces={180} />}
-
-      <audio
-        ref={audioRef}
-        src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"
-      />
 
       <div className="flex-1 grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)] min-h-full">
         <section className="rounded-xl border border-white/10 bg-white/[0.02] flex flex-col overflow-hidden transition-colors min-h-full">
@@ -191,7 +274,7 @@ export function AdvancedPomodoro() {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setSoundEnabled(current => !current)}
+                  onClick={handleSoundToggle}
                   className={`rounded-md border px-4 py-2 transition-all duration-200 font-sans ${
                     soundEnabled
                       ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
@@ -201,6 +284,17 @@ export function AdvancedPomodoro() {
                   <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
                     {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                     {soundEnabled ? "Som Ativo" : "Som Off"}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={testSound}
+                  className="rounded-md border border-white/10 bg-white/5 px-4 py-2 text-gray-300 transition-all duration-200 hover:bg-white/10"
+                >
+                  <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
+                    <Volume2 className="h-4 w-4" />
+                    Testar Som
                   </span>
                 </button>
 
