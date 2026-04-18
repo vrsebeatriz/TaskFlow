@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 TaskFlow Pro
+# TaskFlow Pro
 
 **A next-generation productivity ecosystem and task management platform.**
 
@@ -22,28 +22,28 @@ TaskFlow Pro merges industrial-grade security with a fluid, futuristic interface
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 TaskFlow Pro goes beyond a simple to-do list, offering a comprehensive suite of tools designed to boost deep work and operational efficiency.
 
-### 🛡️ Enterprise-Grade Security
+### Enterprise-Grade Security
 * **JWT Authentication:** Secure, stateless, and persistent user sessions.
 * **Bcrypt Cryptography:** Zero-knowledge architecture where passwords are mathematically hashed before reaching the database.
 * **Isolated Workspaces:** Strict middleware protection ensures full multi-tenant data isolation.
 
-### 🎨 State-of-the-Art Interface
+### State-of-the-Art Interface
 * **Glassmorphism Design System:** A translucent, immersive aesthetic leveraging `backdrop-blur` and ambient lighting effects.
 * **Dynamic Theming:** Deeply integrated Light and Dark modes utilizing Tailwind CSS v4 variants, adapting seamlessly to your environment.
 * **Fluid Micro-interactions:** Cinematic layout transitions and drag-and-drop physics powered by **Framer Motion**.
 
-### ⚙️ Core Productivity Engine
+### Core Productivity Engine
 * **Interactive Kanban Board:** Visualize your workflow and intuitively drag-and-drop tasks across custom columns.
 * **Advanced Pomodoro Timer:** A customizable, visually rich focus timer to manage work sprints and breaks effectively.
 * **Real-time Analytics:** A comprehensive dashboard tracking productivity metrics, completion rates, and priority distribution.
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## Architecture & Tech Stack
 
 This project is structured as a **Monorepo** using npm workspaces, enforcing strict separation of concerns between the API layer and the Presentation layer.
 
@@ -54,7 +54,7 @@ graph TD;
     C -->|Read/Write| D[(LowDB JSON Store)]
 ```
 
-### 💻 Frontend (packages/web)
+### Frontend (packages/web)
 - **Framework:** React 18 + TypeScript
 - **Styling:** Tailwind CSS v4
 - **Animation:** Framer Motion
@@ -62,7 +62,7 @@ graph TD;
 - **State/Routing:** React Context API + React Router
 - **Build Tool:** Vite
 
-### 🔌 Backend (packages/api)
+### Backend (packages/api)
 - **Environment:** Node.js
 - **Framework:** Express.js
 - **Persistence:** LowDB (File-based JSON Database)
@@ -70,7 +70,7 @@ graph TD;
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these instructions to get a local copy up and running for development and testing.
 
@@ -115,7 +115,7 @@ npm run dev
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [x] Secure JWT Authentication & Password Hashing
 - [x] Modernize UI with Glassmorphism System
@@ -127,7 +127,7 @@ npm run dev
 
 ---
 
-## 👩‍💻 Author
+## Author
 
 **Ana Beatriz Araújo** — Software Developer  
 GitHub: [@vrsebeatriz](https://github.com/vrsebeatriz)
