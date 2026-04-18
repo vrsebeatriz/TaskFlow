@@ -2,7 +2,7 @@
 
 O **TaskFlow** é um ecossistema de produtividade moderno projetado para desenvolvedores e entusiastas de organização. Esta versão "Pro" foca em **segurança de nível industrial**, **performance fluida** e uma **interface futurista**.
 
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-cyan?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Concluído-success?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-white?style=for-the-badge)
 
 ---
