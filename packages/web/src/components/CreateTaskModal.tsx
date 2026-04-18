@@ -151,42 +151,42 @@ export function CreateTaskModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-[#000000]/80 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 bg-gray-50 dark:bg-[#000000]/80 backdrop-blur-sm transition-opacity duration-300"
         onClick={handleClose}
       />
 
       <div
         className={`
-          relative bg-[#0A0A0A] rounded-xl shadow-2xl
+          relative bg-white dark:bg-[#0A0A0A] rounded-xl shadow-2xl
           max-w-md w-full transform transition-all duration-500
           ${isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0"}
-          border border-white/10
+          border border-gray-200 dark:border-white/10
         `}
       >
-        <div className="relative p-6 border-b border-white/10">
+        <div className="relative p-6 border-b border-gray-200 dark:border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-blue-600/20 border border-blue-500/30 rounded-xl">
                 <Sparkles className="h-4 w-4 text-blue-400" />
               </div>
               <div>
-                <h2 className="text-[13px] font-mono font-bold uppercase tracking-[0.2em] text-white">
+                <h2 className="text-[13px] font-mono font-bold uppercase tracking-[0.2em] text-gray-900 dark:text-white">
                   {isEditMode ? "Editar Tarefa" : "Nova Tarefa"}
                 </h2>
-                <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest mt-1">Passo {step} de 3</p>
+                <p className="text-[10px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-widest mt-1">Passo {step} de 3</p>
               </div>
             </div>
             <button
               onClick={handleClose}
               disabled={isBusy}
-              className="p-2 hover:bg-white/5 border border-transparent hover:border-white/10 rounded-xl transition-all duration-200 disabled:opacity-50"
+              className="p-2 hover:bg-gray-100 dark:bg-white/5 border border-transparent hover:border-gray-200 dark:border-white/10 rounded-xl transition-all duration-200 disabled:opacity-50"
             >
-              <X className="h-4 w-4 text-gray-400" />
+              <X className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             </button>
           </div>
 
           <div className="mt-4">
-            <div className="w-full bg-white/5 rounded-full h-1">
+            <div className="w-full bg-gray-100 dark:bg-white/5 rounded-full h-1">
               <div
                 className="bg-blue-500 h-1 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
                 style={{ width: `${(step / 3) * 100}%` }}
@@ -199,7 +199,7 @@ export function CreateTaskModal({
           {step === 1 && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400 mb-3">
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-600 dark:text-gray-400 mb-3">
                   O que precisa ser feito?
                 </label>
                 <textarea
@@ -207,7 +207,7 @@ export function CreateTaskModal({
                   onChange={event => setFormData({ ...formData, description: event.target.value })}
                   placeholder="Descreva sua tarefa..."
                   rows={4}
-                  className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] resize-none outline-none font-sans"
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] resize-none outline-none font-sans"
                   required
                   autoFocus
                   disabled={isBusy}
@@ -228,7 +228,7 @@ export function CreateTaskModal({
           {step === 2 && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400 mb-3 flex items-center">
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-600 dark:text-gray-400 mb-3 flex items-center">
                   <Flag className="h-3 w-3 mr-2" />
                   Prioridade
                 </label>
@@ -244,7 +244,7 @@ export function CreateTaskModal({
                         ${
                           formData.priority === option.value
                             ? `border-${option.color.replace('bg-', '')} ${option.color} text-[#111] font-bold`
-                            : "border-white/10 bg-white/[0.02] text-gray-400 hover:bg-white/[0.04] hover:text-white"
+                            : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-white/[0.04] hover:text-gray-900 dark:text-white"
                         }
                       `}
                     >
@@ -258,7 +258,7 @@ export function CreateTaskModal({
               </div>
 
               <div>
-                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400 mb-3 flex items-center">
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-600 dark:text-gray-400 mb-3 flex items-center">
                   <Zap className="h-3 w-3 mr-2" />
                   Categoria
                 </label>
@@ -274,7 +274,7 @@ export function CreateTaskModal({
                         ${
                           formData.category === option.value
                             ? `border-${option.color.replace('bg-', '')} ${option.color} text-[#111] font-bold`
-                            : "border-white/10 bg-white/[0.02] text-gray-400 hover:bg-white/[0.04] hover:text-white"
+                            : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-white/[0.04] hover:text-gray-900 dark:text-white"
                         }
                       `}
                     >
@@ -291,7 +291,7 @@ export function CreateTaskModal({
                   type="button"
                   onClick={prevStep}
                   disabled={isBusy}
-                  className="flex-1 py-3 px-4 border border-white/20 text-white hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans"
+                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans"
                 >
                   Voltar
                 </button>
@@ -310,36 +310,36 @@ export function CreateTaskModal({
           {step === 3 && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400 mb-3 flex items-center">
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-600 dark:text-gray-400 mb-3 flex items-center">
                   <Calendar className="h-3 w-3 mr-2" />
                   Data de Vencimento
                 </label>
                 <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-500 h-4 w-4" />
                   <input
                     type="date"
                     value={formData.dueDate}
                     onChange={event => setFormData({ ...formData, dueDate: event.target.value })}
                     disabled={isBusy}
-                    className="w-full pl-10 pr-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
               </div>
 
-              <div className="bg-white/[0.02] rounded-xl p-4 border border-white/10">
-                <h4 className="text-[11px] font-mono text-gray-500 uppercase tracking-widest mb-2">Visualização</h4>
-                <p className="text-gray-200 text-[13px] font-sans">{formData.description}</p>
+              <div className="bg-white dark:bg-white/[0.02] rounded-xl p-4 border border-gray-200 dark:border-white/10">
+                <h4 className="text-[11px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-2">Visualização</h4>
+                <p className="text-gray-800 dark:text-gray-200 text-[13px] font-sans">{formData.description}</p>
                 <div className="flex flex-wrap gap-2 mt-3">
-                  <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[10px] font-mono uppercase tracking-widest">
+                  <span className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 text-[10px] font-mono uppercase tracking-widest">
                     {getPriorityLabel(formData.priority)}
                   </span>
                   {formData.category && (
-                    <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[10px] font-mono uppercase tracking-widest">
+                    <span className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 text-[10px] font-mono uppercase tracking-widest">
                       {getCategoryLabel(formData.category)}
                     </span>
                   )}
                   {formData.dueDate && (
-                    <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[10px] font-mono uppercase tracking-widest">
+                    <span className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 text-[10px] font-mono uppercase tracking-widest">
                       {new Date(formData.dueDate).toLocaleDateString("pt-BR")}
                     </span>
                   )}
@@ -355,7 +355,7 @@ export function CreateTaskModal({
                       </div>
                       <div>
                         <h4 className="text-[11px] font-bold text-red-400 uppercase tracking-widest">Zona de Perigo</h4>
-                        <p className="mt-1 text-[11px] text-gray-500 font-sans">
+                        <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-500 font-sans">
                           A exclusão não pode ser desfeita.
                         </p>
                       </div>
@@ -373,7 +373,7 @@ export function CreateTaskModal({
 
                   {isDeleteConfirmVisible && (
                     <div className="mt-4 border-t border-red-500/20 pt-4">
-                      <p className="text-[11px] text-gray-400 font-sans">
+                      <p className="text-[11px] text-gray-600 dark:text-gray-400 font-sans">
                         Tem certeza que deseja excluir esta tarefa?
                       </p>
                       <div className="mt-3 flex gap-3">
@@ -381,7 +381,7 @@ export function CreateTaskModal({
                           type="button"
                           onClick={() => setIsDeleteConfirmVisible(false)}
                           disabled={isBusy}
-                          className="flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-bold tracking-widest uppercase text-gray-400 hover:bg-white/10 transition-colors"
+                          className="flex-1 rounded-md border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-3 py-2 text-[10px] font-bold tracking-widest uppercase text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:bg-white/10 transition-colors"
                         >
                           Cancelar
                         </button>
@@ -404,7 +404,7 @@ export function CreateTaskModal({
                   type="button"
                   onClick={prevStep}
                   disabled={isBusy}
-                  className="flex-1 py-3 px-4 border border-white/20 text-white hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
+                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
                 >
                   Voltar
                 </button>

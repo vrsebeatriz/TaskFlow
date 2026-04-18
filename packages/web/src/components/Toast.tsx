@@ -120,7 +120,7 @@ function Toast({
     >
       <div className="flex items-start space-x-3">
         <div className={`p-2 bg-gradient-to-r ${currentConfig.color} rounded-xl`}>
-          <Icon className="h-4 w-4 text-white" />
+          <Icon className="h-4 w-4 text-gray-900 dark:text-white" />
         </div>
         <div className="flex-1">
           <p className="text-sm font-medium">{message}</p>

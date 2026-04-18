@@ -168,18 +168,18 @@ function KanbanBoard({ tasks, onTaskMove, onEditTask }: KanbanBoardProps) {
         {columns.map(column => (
           <div
             key={column.id}
-            className="rounded-xl flex min-h-[500px] flex-col overflow-visible border border-white/10 bg-[#0A0A0A] transition-[border-color,box-shadow,background-color] duration-200"
+            className="rounded-xl flex min-h-[500px] flex-col overflow-visible border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0A0A0A] transition-[border-color,box-shadow,background-color] duration-200"
           >
-            <div className="flex items-center justify-between border-b border-white/10 p-5">
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/10 p-5">
               <div className="flex items-center gap-3">
                 <div
                   className={`h-4 w-4 rounded-full ${column.color} opacity-80`}
                 />
-                <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-white">
+                <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-gray-900 dark:text-white">
                   {column.title}
                 </h3>
               </div>
-              <span className="rounded-md border border-white/10 bg-white/5 px-2.5 py-0.5 text-[10px] font-mono text-slate-400">
+              <span className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-2.5 py-0.5 text-[10px] font-mono text-slate-500 dark:text-slate-400">
                 {tasksByColumn[column.id].length}
               </span>
             </div>
@@ -202,7 +202,7 @@ function KanbanBoard({ tasks, onTaskMove, onEditTask }: KanbanBoardProps) {
                   ref={provided.innerRef}
                   className={[
                     'min-h-[200px] flex-1 p-4 transition-[background-color,padding] duration-150 overflow-visible',
-                    snapshot.isDraggingOver ? 'rounded-b-2xl bg-white/[0.04]' : '',
+                    snapshot.isDraggingOver ? 'rounded-b-2xl bg-gray-50 dark:bg-white/[0.04]' : '',
                     snapshot.draggingFromThisWith ? 'bg-white/[0.015]' : '',
                   ].join(' ')}
                 >

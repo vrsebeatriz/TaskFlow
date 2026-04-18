@@ -85,7 +85,6 @@ O App estará disponível em http://localhost:5173.
 - [x] Modernizar UI com Glassmorphism e Framer Motion.
 - [x] Implementar persistência de Drag and Drop no base de dados.
 - [ ] Adicionar suporte a Dark/Light Mode dinâmico.
-- [ ] Criar aplicação Mobile com React Native.
 
 ---
 

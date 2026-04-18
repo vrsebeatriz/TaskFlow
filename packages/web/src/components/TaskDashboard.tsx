@@ -18,7 +18,7 @@ const TaskDashboard: React.FC<Props> = ({ tasks, onToggleTask }) => {
         <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
           As Minhas Tarefas
         </h1>
-        <p className="text-slate-400 mt-1">Tens {pendingTasks.length} tarefas pendentes para hoje.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Tens {pendingTasks.length} tarefas pendentes para hoje.</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

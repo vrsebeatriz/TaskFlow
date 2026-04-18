@@ -61,18 +61,18 @@ export function DashboardStats({ tasks }: DashboardStatsProps) {
       {statCards.map((stat, index) => (
         <div
           key={index}
-          className="rounded-xl border border-white/10 bg-white/[0.02] p-5 hover:bg-white/[0.04] transition-colors"
+          className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-5 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors"
         >
-          <div className="flex items-center justify-between text-gray-400 mb-4">
+          <div className="flex items-center justify-between text-gray-600 dark:text-gray-400 mb-4">
             <span className="text-[13px] font-medium font-sans">{stat.label}</span>
-            <stat.icon className="h-4 w-4 text-gray-500" />
+            <stat.icon className="h-4 w-4 text-gray-500 dark:text-gray-500" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-medium tracking-tight text-gray-100 font-manrope">{stat.value}</span>
+            <span className="text-3xl font-medium tracking-tight text-gray-900 dark:text-gray-100 font-manrope">{stat.value}</span>
           </div>
 
           {stat.label === "Produtividade" && (
-            <div className="mt-4 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+            <div className="mt-4 h-1.5 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-500 rounded-full transition-all duration-1000"
                 style={{ width: `${productivity}%` }}

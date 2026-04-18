@@ -57,7 +57,7 @@ export function Header({ user, onLogout }: HeaderProps) {
                 animate-float
               "
             >
-              <CheckSquare className="h-6 w-6 text-white" />
+              <CheckSquare className="h-6 w-6 text-gray-900 dark:text-white" />
             </div>
             <div>
               <h1
@@ -104,7 +104,7 @@ export function Header({ user, onLogout }: HeaderProps) {
                 <div
                   className="
                     p-2 bg-gradient-to-r from-green-400 to-blue-500
-                    rounded-xl text-white transform group-hover:scale-110 transition-all duration-200
+                    rounded-xl text-gray-900 dark:text-white transform group-hover:scale-110 transition-all duration-200
                   "
                 >
                   <User className="h-5 w-5" />
@@ -113,7 +113,7 @@ export function Header({ user, onLogout }: HeaderProps) {
                   <p className="text-sm font-semibold text-gray-900 dark:text-white">
                     {user?.name || "Usuário"}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-500 dark:text-gray-500 dark:text-gray-400">
                     {user?.email || "Carregando..."}
                   </p>
                 </div>
@@ -125,7 +125,7 @@ export function Header({ user, onLogout }: HeaderProps) {
                     <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                       {user?.name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p className="text-xs text-gray-500 dark:text-gray-500 dark:text-gray-400 truncate">
                       {user?.email}
                     </p>
                   </div>

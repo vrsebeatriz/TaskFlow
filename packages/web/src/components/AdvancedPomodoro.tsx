@@ -57,7 +57,7 @@ export function AdvancedPomodoro() {
       time: settings.focusTime * 60,
       label: "Foco",
       description: "Bloco profundo para executar sem interrupções.",
-      chipClassName: "border-blue-500 bg-blue-500/10 text-white shadow-lg",
+      chipClassName: "border-blue-500 bg-blue-500/10 text-gray-900 dark:text-white shadow-lg",
       panelClassName: "border-blue-500/20 bg-blue-500/[0.02]",
       strokeFrom: "#3b82f6",
       strokeTo: "#2563eb",
@@ -66,7 +66,7 @@ export function AdvancedPomodoro() {
       time: settings.shortBreak * 60,
       label: "Pausa Curta",
       description: "Recupere energia antes de voltar para a próxima entrega.",
-      chipClassName: "border-emerald-500 bg-emerald-500/10 text-white shadow-lg",
+      chipClassName: "border-emerald-500 bg-emerald-500/10 text-gray-900 dark:text-white shadow-lg",
       panelClassName: "border-emerald-500/20 bg-emerald-500/[0.02]",
       strokeFrom: "#10b981",
       strokeTo: "#059669",
@@ -75,7 +75,7 @@ export function AdvancedPomodoro() {
       time: settings.longBreak * 60,
       label: "Pausa Longa",
       description: "Desacelere um pouco mais para manter consistência ao longo do dia.",
-      chipClassName: "border-purple-500 bg-purple-500/10 text-white shadow-lg",
+      chipClassName: "border-purple-500 bg-purple-500/10 text-gray-900 dark:text-white shadow-lg",
       panelClassName: "border-purple-500/20 bg-purple-500/[0.02]",
       strokeFrom: "#a855f7",
       strokeTo: "#7e22ce",
@@ -252,8 +252,8 @@ export function AdvancedPomodoro() {
       {showConfetti && <Confetti recycle={false} numberOfPieces={180} />}
 
       <div className="flex-1 grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)] min-h-full">
-        <section className="rounded-xl border border-white/10 bg-white/[0.02] flex flex-col overflow-hidden transition-colors min-h-full">
-          <div className="border-b border-white/10 p-6">
+        <section className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] flex flex-col overflow-hidden transition-colors min-h-full">
+          <div className="border-b border-gray-200 dark:border-white/10 p-6">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
@@ -261,10 +261,10 @@ export function AdvancedPomodoro() {
                     <Target className="h-5 w-5 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
+                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-500">
                       Sistema de Foco
                     </p>
-                    <h3 className="text-xl font-manrope font-bold text-gray-100">
+                    <h3 className="text-xl font-manrope font-bold text-gray-900 dark:text-gray-100">
                       Pomodoro
                     </h3>
                   </div>
@@ -278,7 +278,7 @@ export function AdvancedPomodoro() {
                   className={`rounded-md border px-4 py-2 transition-all duration-200 font-sans ${
                     soundEnabled
                       ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
-                      : "border-white/10 bg-white/5 text-gray-400 hover:bg-white/10"
+                      : "border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:bg-white/10"
                   }`}
                 >
                   <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
@@ -290,7 +290,7 @@ export function AdvancedPomodoro() {
                 <button
                   type="button"
                   onClick={testSound}
-                  className="rounded-md border border-white/10 bg-white/5 px-4 py-2 text-gray-300 transition-all duration-200 hover:bg-white/10"
+                  className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-4 py-2 text-gray-700 dark:text-gray-300 transition-all duration-200 hover:bg-gray-200 dark:bg-white/10"
                 >
                   <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
                     <Volume2 className="h-4 w-4" />
@@ -327,11 +327,11 @@ export function AdvancedPomodoro() {
                       "min-h-[100px] rounded-xl border p-4 text-left transition-all duration-200 flex flex-col justify-between gap-2",
                       isActive
                         ? currentMode.chipClassName
-                        : "border-white/10 bg-white/[0.03] text-gray-400 hover:border-white/20 hover:bg-white/[0.06]",
+                        : "border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/[0.03] text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:border-white/20 hover:bg-white/[0.06]",
                     ].join(" ")}
                   >
                     <p className="text-[11px] font-mono font-bold uppercase tracking-widest">{currentMode.label}</p>
-                    <p className={`text-[11px] font-sans leading-relaxed ${isActive ? "text-white/80" : "text-gray-500"}`}>
+                    <p className={`text-[11px] font-sans leading-relaxed ${isActive ? "text-gray-900 dark:text-white/80" : "text-gray-500 dark:text-gray-500"}`}>
                       {currentMode.description}
                     </p>
                   </button>
@@ -371,13 +371,13 @@ export function AdvancedPomodoro() {
                 </svg>
 
                 <div className="relative z-10 flex flex-col items-center text-center">
-                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-500 mb-2">
                     {modes[mode].label}
                   </p>
-                  <div className="text-6xl font-manrope font-bold tracking-tighter text-gray-100">
+                  <div className="text-6xl font-manrope font-bold tracking-tighter text-gray-900 dark:text-gray-100">
                     {formatTime(timeLeft)}
                   </div>
-                  <div className="mt-3 text-[11px] font-sans font-bold uppercase tracking-widest text-gray-400">
+                  <div className="mt-3 text-[11px] font-sans font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
                     {isRunning ? "Rodando" : "Pausado"}
                   </div>
                 </div>
@@ -389,7 +389,7 @@ export function AdvancedPomodoro() {
                 <button
                   type="button"
                   onClick={startTimer}
-                  className="inline-flex items-center gap-3 rounded-md bg-blue-600 px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-white transition-all hover:bg-blue-500 font-sans"
+                  className="inline-flex items-center gap-3 rounded-md bg-blue-600 px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-900 dark:text-white transition-all hover:bg-blue-500 font-sans"
                 >
                   <Play className="h-4 w-4" />
                   Iniciar
@@ -408,7 +408,7 @@ export function AdvancedPomodoro() {
               <button
                 type="button"
                 onClick={resetTimer}
-                className="inline-flex items-center gap-3 rounded-md border border-white/20 bg-transparent px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-300 transition-all hover:bg-white/5 font-sans"
+                className="inline-flex items-center gap-3 rounded-md border border-gray-300 dark:border-white/20 bg-transparent px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300 transition-all hover:bg-gray-100 dark:bg-white/5 font-sans"
               >
                 <RotateCcw className="h-4 w-4" />
                 Resetar
@@ -418,68 +418,68 @@ export function AdvancedPomodoro() {
         </section>
 
         <aside className="flex flex-col gap-6">
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6 flex-1 hover:bg-white/[0.04] transition-colors">
+          <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 flex-1 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/20">
                 <TimerReset className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-500">
                   Ritmo do dia
                 </p>
-                <h4 className="text-sm font-manrope font-bold text-gray-100">Métricas</h4>
+                <h4 className="text-sm font-manrope font-bold text-gray-900 dark:text-gray-100">Métricas</h4>
               </div>
             </div>
 
             <div className="space-y-3">
-              <div className="rounded-md border border-white/10 bg-white/[0.01] p-4 flex justify-between items-center">
-                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500">Blocos concluídos</p>
-                <p className="text-xl font-manrope font-bold text-gray-100">{sessions}</p>
+              <div className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.01] p-4 flex justify-between items-center">
+                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-500">Blocos concluídos</p>
+                <p className="text-xl font-manrope font-bold text-gray-900 dark:text-gray-100">{sessions}</p>
               </div>
 
-              <div className="rounded-md border border-white/10 bg-white/[0.01] p-4 flex justify-between items-center">
-                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500">Tempo focado</p>
-                <p className="text-xl font-manrope font-bold text-gray-100">
+              <div className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.01] p-4 flex justify-between items-center">
+                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-500">Tempo focado</p>
+                <p className="text-xl font-manrope font-bold text-gray-900 dark:text-gray-100">
                   {Math.floor(totalFocusedMinutes / 60)}h {totalFocusedMinutes % 60}m
                 </p>
               </div>
 
-              <div className="rounded-md border border-white/10 bg-white/[0.01] p-4 flex justify-between items-center">
-                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500">Ciclo atual</p>
-                <p className="text-xl font-manrope font-bold text-gray-100">{modes[mode].label}</p>
+              <div className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.01] p-4 flex justify-between items-center">
+                <p className="text-[11px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-500">Ciclo atual</p>
+                <p className="text-xl font-manrope font-bold text-gray-900 dark:text-gray-100">{modes[mode].label}</p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6 flex-1 hover:bg-white/[0.04] transition-colors">
+          <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 flex-1 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
                 <Coffee className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-500">
                   Setup atual
                 </p>
-                <h4 className="text-sm font-manrope font-bold text-gray-100">Configuração</h4>
+                <h4 className="text-sm font-manrope font-bold text-gray-900 dark:text-gray-100">Configuração</h4>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-md border border-white/10 bg-white/[0.01] p-3 text-center">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Foco</p>
-                <p className="mt-1 text-lg font-manrope font-bold text-gray-100">{settings.focusTime}m</p>
+              <div className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.01] p-3 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-500">Foco</p>
+                <p className="mt-1 text-lg font-manrope font-bold text-gray-900 dark:text-gray-100">{settings.focusTime}m</p>
               </div>
-              <div className="rounded-md border border-white/10 bg-white/[0.01] p-3 text-center">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Curta</p>
-                <p className="mt-1 text-lg font-manrope font-bold text-gray-100">{settings.shortBreak}m</p>
+              <div className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.01] p-3 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-500">Curta</p>
+                <p className="mt-1 text-lg font-manrope font-bold text-gray-900 dark:text-gray-100">{settings.shortBreak}m</p>
               </div>
-              <div className="rounded-md border border-white/10 bg-white/[0.01] p-3 text-center">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Longa</p>
-                <p className="mt-1 text-lg font-manrope font-bold text-gray-100">{settings.longBreak}m</p>
+              <div className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.01] p-3 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-500">Longa</p>
+                <p className="mt-1 text-lg font-manrope font-bold text-gray-900 dark:text-gray-100">{settings.longBreak}m</p>
               </div>
-              <div className="rounded-md border border-white/10 bg-white/[0.01] p-3 text-center">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500">Repete</p>
-                <p className="mt-1 text-lg font-manrope font-bold text-gray-100">{settings.sessionsUntilLongBreak}x</p>
+              <div className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.01] p-3 text-center">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-500">Repete</p>
+                <p className="mt-1 text-lg font-manrope font-bold text-gray-900 dark:text-gray-100">{settings.sessionsUntilLongBreak}x</p>
               </div>
             </div>
           </div>
@@ -489,27 +489,27 @@ export function AdvancedPomodoro() {
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-[#000000]/80 backdrop-blur-sm transition-opacity duration-300"
+            className="absolute inset-0 bg-gray-50 dark:bg-[#000000]/80 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setShowSettings(false)}
           />
-          <div className="relative z-10 w-full max-w-md rounded-xl border border-white/10 bg-[#0A0A0A] shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 p-6">
+          <div className="relative z-10 w-full max-w-md rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0A0A0A] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-white/10 p-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600/20 border border-blue-500/30">
                   <Settings className="h-5 w-5 text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-500">
                     Personalização
                   </p>
-                  <h4 className="text-[13px] font-mono font-bold uppercase tracking-[0.2em] text-white mt-1">Opções do Timer</h4>
+                  <h4 className="text-[13px] font-mono font-bold uppercase tracking-[0.2em] text-gray-900 dark:text-white mt-1">Opções do Timer</h4>
                 </div>
               </div>
 
               <button
                 type="button"
                 onClick={() => setShowSettings(false)}
-                className="rounded-md p-2 text-gray-500 hover:bg-white/5 hover:text-white transition-colors border border-transparent hover:border-white/10"
+                className="rounded-md p-2 text-gray-500 dark:text-gray-500 hover:bg-gray-100 dark:bg-white/5 hover:text-gray-900 dark:text-white transition-colors border border-transparent hover:border-gray-200 dark:border-white/10"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -517,7 +517,7 @@ export function AdvancedPomodoro() {
 
             <div className="grid gap-5 p-6">
               <div className="space-y-2">
-                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400">Tempo de foco</label>
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-600 dark:text-gray-400">Tempo de foco</label>
                 <input
                   type="number"
                   min="1"
@@ -529,13 +529,13 @@ export function AdvancedPomodoro() {
                       focusTime: Math.max(1, Math.min(60, parseInt(event.target.value, 10) || 25)),
                     }))
                   }
-                  className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                 />
               </div>
 
               <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400">Pausa curta</label>
+                  <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-600 dark:text-gray-400">Pausa curta</label>
                   <input
                     type="number"
                     min="1"
@@ -550,12 +550,12 @@ export function AdvancedPomodoro() {
                         ),
                       }))
                     }
-                    className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400">Pausa longa</label>
+                  <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-600 dark:text-gray-400">Pausa longa</label>
                   <input
                     type="number"
                     min="1"
@@ -570,13 +570,13 @@ export function AdvancedPomodoro() {
                         ),
                       }))
                     }
-                    className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-400">
+                <label className="block text-[11px] font-mono uppercase tracking-[0.15em] text-gray-600 dark:text-gray-400">
                   Sessões até a pausa longa
                 </label>
                 <input
@@ -593,7 +593,7 @@ export function AdvancedPomodoro() {
                       ),
                     }))
                   }
-                  className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] outline-none font-sans"
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                 />
               </div>
 
@@ -601,7 +601,7 @@ export function AdvancedPomodoro() {
                 <button
                   type="button"
                   onClick={() => setShowSettings(false)}
-                  className="flex-1 py-3 px-4 border border-white/20 text-white hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
+                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
                 >
                   Fechar
                 </button>

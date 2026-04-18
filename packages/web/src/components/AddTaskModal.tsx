@@ -78,7 +78,7 @@ export function AddTaskModal({ isOpen, onClose, onAdd }: AddTaskModalProps) {
                 Data de Vencimento
               </label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 h-4 w-4" />
                 <input
                   type="date"
                   value={dueDate}
@@ -99,7 +99,7 @@ export function AddTaskModal({ isOpen, onClose, onAdd }: AddTaskModalProps) {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="flex-1 px-4 py-2 bg-blue-500 text-gray-900 dark:text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
               Criar Task
             </button>

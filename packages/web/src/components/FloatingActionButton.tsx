@@ -17,7 +17,7 @@ export function FloatingActionButton({ onClick }: FloatingActionButtonProps) {
         fixed bottom-8 right-8 z-40
         bg-gradient-to-r from-blue-500 to-purple-600
         hover:from-blue-600 hover:to-purple-700
-        text-white p-4 rounded-2xl
+        text-gray-900 dark:text-white p-4 rounded-2xl
         shadow-2xl hover:shadow-2xl
         transition-all duration-300
         transform hover:scale-110

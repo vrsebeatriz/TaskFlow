@@ -86,7 +86,7 @@ export function PomodoroTimer() {
               <h4 className="text-lg font-semibold text-gray-900">Configurações do Timer</h4>
               <button
                 onClick={() => setShowSettings(false)}
-                className="p-1 text-gray-500 hover:text-gray-700 rounded text-lg"
+                className="p-1 text-gray-500 dark:text-gray-500 hover:text-gray-700 rounded text-lg"
               >
                 ✕
               </button>
@@ -137,7 +137,7 @@ export function PomodoroTimer() {
               </button>
               <button
                 onClick={() => setShowSettings(false)}
-                className="flex-1 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                className="flex-1 py-2 bg-blue-500 text-gray-900 dark:text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
                 Salvar
               </button>
@@ -151,7 +151,7 @@ export function PomodoroTimer() {
           onClick={() => switchMode('work')}
           className={`flex-1 py-2 rounded-lg transition-colors ${
             mode === 'work' 
-              ? 'bg-blue-500 text-white' 
+              ? 'bg-blue-500 text-gray-900 dark:text-white' 
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -161,7 +161,7 @@ export function PomodoroTimer() {
           onClick={() => switchMode('break')}
           className={`flex-1 py-2 rounded-lg transition-colors ${
             mode === 'break' 
-              ? 'bg-green-500 text-white' 
+              ? 'bg-green-500 text-gray-900 dark:text-white' 
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -189,7 +189,7 @@ export function PomodoroTimer() {
             <div className="text-sm text-gray-600 capitalize">
               {mode === 'work' ? 'Trabalhando' : 'Descansando'}
             </div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
               {settings.workTime}min / {settings.breakTime}min
             </div>
           </div>
@@ -201,8 +201,8 @@ export function PomodoroTimer() {
           onClick={toggleTimer}
           className={`p-3 rounded-full ${
             isRunning 
-              ? 'bg-yellow-500 text-white hover:bg-yellow-600' 
-              : 'bg-green-500 text-white hover:bg-green-600'
+              ? 'bg-yellow-500 text-gray-900 dark:text-white hover:bg-yellow-600' 
+              : 'bg-green-500 text-gray-900 dark:text-white hover:bg-green-600'
           } transition-colors`}
         >
           {isRunning ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}

@@ -66,59 +66,59 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="bg-white/[0.02] rounded-xl p-5 border border-white/10 hover:bg-white/[0.04] transition-colors">
+      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[13px] font-medium text-gray-400 font-sans">Produtividade</h3>
-          <TrendingUp className="h-4 w-4 text-gray-500" />
+          <h3 className="text-[13px] font-medium text-gray-600 dark:text-gray-400 font-sans">Produtividade</h3>
+          <TrendingUp className="h-4 w-4 text-gray-500 dark:text-gray-500" />
         </div>
-        <div className="text-3xl font-bold tracking-tight text-gray-100 font-manrope mb-4">
+        <div className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 font-manrope mb-4">
           {Math.round(completionRate)}%
         </div>
-        <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden mb-2">
+        <div className="w-full bg-gray-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden mb-2">
           <div
             className="bg-emerald-500 h-full rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
             style={{ width: `${completionRate}%` }}
           />
         </div>
-        <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+        <p className="text-[10px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-widest">
           {completedTasks} de {totalTasks} tarefas concluídas
         </p>
       </div>
 
-      <div className="bg-white/[0.02] rounded-xl p-5 border border-white/10 hover:bg-white/[0.04] transition-colors">
+      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[13px] font-medium text-gray-400 font-sans">Para Hoje</h3>
-          <Calendar className="h-4 w-4 text-gray-500" />
+          <h3 className="text-[13px] font-medium text-gray-600 dark:text-gray-400 font-sans">Para Hoje</h3>
+          <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-500" />
         </div>
-        <div className="text-3xl font-bold tracking-tight text-gray-100 font-manrope mb-4">
+        <div className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 font-manrope mb-4">
           {tasksForToday}
         </div>
-        <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden mb-2">
+        <div className="w-full bg-gray-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden mb-2">
           <div
             className="bg-blue-500 h-full rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
             style={{ width: `${(tasksForToday / Math.max(totalTasks, 1)) * 100}%` }}
           />
         </div>
-        <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+        <p className="text-[10px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-widest">
           Tarefas com vencimento para hoje
         </p>
       </div>
 
-      <div className="bg-white/[0.02] rounded-xl p-5 border border-white/10 hover:bg-white/[0.04] transition-colors">
+      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[13px] font-medium text-gray-400 font-sans">Eficiência</h3>
-          <Clock className="h-4 w-4 text-gray-500" />
+          <h3 className="text-[13px] font-medium text-gray-600 dark:text-gray-400 font-sans">Eficiência</h3>
+          <Clock className="h-4 w-4 text-gray-500 dark:text-gray-500" />
         </div>
-        <div className="text-3xl font-bold tracking-tight text-gray-100 font-manrope mb-4">
+        <div className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 font-manrope mb-4">
           {formatTimeDisplay()}
         </div>
-        <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden mb-2">
+        <div className="w-full bg-gray-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden mb-2">
           <div
             className="bg-purple-500 h-full rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(168,85,247,0.5)]"
             style={{ width: `${efficiencyScore}%` }}
           />
         </div>
-        <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+        <p className="text-[10px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-widest">
           {avgCompletionTime > 0
             ? `Tempo médio (${Math.round(efficiencyScore)}% eficiência)`
             : "Nenhuma tarefa concluída ainda"}
@@ -146,12 +146,12 @@ export function ProductivityChart({ tasks = [] }: ProductivityChartProps) {
     <div className="flex flex-col h-full justify-center space-y-6">
       <div className="space-y-2">
         <div className="flex justify-between items-end">
-          <span className="text-xs font-mono text-gray-300">Concluídas</span>
+          <span className="text-xs font-mono text-gray-700 dark:text-gray-300">Concluídas</span>
           <span className="text-xs font-mono text-emerald-400">
             {completedTasks} ({Math.round(completedPercentage)}%)
           </span>
         </div>
-        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+        <div className="h-1.5 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
           <div
             className="h-full bg-emerald-500 rounded-full transition-all duration-1000"
             style={{ width: `${completedPercentage}%` }}
@@ -161,12 +161,12 @@ export function ProductivityChart({ tasks = [] }: ProductivityChartProps) {
 
       <div className="space-y-2">
         <div className="flex justify-between items-end">
-          <span className="text-xs font-mono text-gray-300">Em Progresso</span>
+          <span className="text-xs font-mono text-gray-700 dark:text-gray-300">Em Progresso</span>
           <span className="text-xs font-mono text-amber-400">
             {inProgressTasks} ({Math.round(inProgressPercentage)}%)
           </span>
         </div>
-        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+        <div className="h-1.5 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
           <div
             className="h-full bg-amber-400 rounded-full transition-all duration-1000"
             style={{ width: `${inProgressPercentage}%` }}
@@ -176,12 +176,12 @@ export function ProductivityChart({ tasks = [] }: ProductivityChartProps) {
 
       <div className="space-y-2">
         <div className="flex justify-between items-end">
-          <span className="text-xs font-mono text-gray-300">Pendentes</span>
+          <span className="text-xs font-mono text-gray-700 dark:text-gray-300">Pendentes</span>
           <span className="text-xs font-mono text-blue-400">
             {pendingTasks} ({Math.round(pendingPercentage)}%)
           </span>
         </div>
-        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+        <div className="h-1.5 w-full bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
           <div
             className="h-full bg-blue-500 rounded-full transition-all duration-1000"
             style={{ width: `${pendingPercentage}%` }}
