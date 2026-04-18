@@ -64,7 +64,7 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
           </div>
           <button
             onClick={onClose}
-            className="rounded-md p-2 text-gray-500 dark:text-gray-500 hover:bg-gray-100 dark:bg-white/5 hover:text-gray-900 dark:text-white transition-colors border border-transparent hover:border-gray-200 dark:border-white/10"
+            className="rounded-md p-2 text-gray-500 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:text-white transition-colors border border-transparent hover:border-gray-200 dark:border-white/10"
           >
             <X className="h-4 w-4" />
           </button>
@@ -87,7 +87,7 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-purple-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-purple-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                 placeholder="Seu nome completo"
                 required
               />
@@ -104,7 +104,7 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-purple-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-purple-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                 placeholder="seu@email.com"
                 required
               />
@@ -122,7 +122,7 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-2 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-purple-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                  className="w-full pl-10 pr-2 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-purple-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                   placeholder="Mínimo 6"
                   required
                 />
@@ -139,7 +139,7 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                   type={showPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-purple-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                  className="w-full pl-10 pr-10 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-purple-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                   placeholder="Repita"
                   required
                 />

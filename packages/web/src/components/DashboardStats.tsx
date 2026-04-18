@@ -61,7 +61,7 @@ export function DashboardStats({ tasks }: DashboardStatsProps) {
       {statCards.map((stat, index) => (
         <div
           key={index}
-          className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-5 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors"
+          className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-5 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors"
         >
           <div className="flex items-center justify-between text-gray-600 dark:text-gray-400 mb-4">
             <span className="text-[13px] font-medium font-sans">{stat.label}</span>

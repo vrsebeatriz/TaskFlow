@@ -69,7 +69,7 @@ export function StatsOverview({ tasks }: StatsOverviewProps) {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
         {statCards.map((stat, index) => (
-          <div key={index} className="text-center p-4 bg-white dark:bg-white/[0.02] rounded-xl border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
+          <div key={index} className="text-center p-4 bg-white dark:bg-white/[0.02] rounded-xl border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors">
             <div className={`inline-flex p-2 rounded-lg ${stat.color} mb-3`}>
               <stat.icon className="h-4 w-4" />
             </div>

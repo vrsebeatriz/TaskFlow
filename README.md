@@ -82,9 +82,9 @@ O App estará disponível em http://localhost:5173.
 ## 🗺️ Roadmap de Evolução
 
 - [x] Implementar Autenticação JWT e Hash de Passwords.
-- [x] Modernizar UI com Glassmorphism e Framer Motion.
+- [x] Modernizar UI.
 - [x] Implementar persistência de Drag and Drop no base de dados.
-- [ ] Adicionar suporte a Dark/Light Mode dinâmico.
+- [x] Adicionar suporte a Dark/Light Mode dinâmico.
 
 ---
 

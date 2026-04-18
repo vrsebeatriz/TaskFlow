@@ -179,7 +179,7 @@ export function CreateTaskModal({
             <button
               onClick={handleClose}
               disabled={isBusy}
-              className="p-2 hover:bg-gray-100 dark:bg-white/5 border border-transparent hover:border-gray-200 dark:border-white/10 rounded-xl transition-all duration-200 disabled:opacity-50"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 border border-transparent hover:border-gray-200 dark:border-white/10 rounded-xl transition-all duration-200 disabled:opacity-50"
             >
               <X className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             </button>
@@ -207,7 +207,7 @@ export function CreateTaskModal({
                   onChange={event => setFormData({ ...formData, description: event.target.value })}
                   placeholder="Descreva sua tarefa..."
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] resize-none outline-none font-sans"
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] resize-none outline-none font-sans"
                   required
                   autoFocus
                   disabled={isBusy}
@@ -244,7 +244,7 @@ export function CreateTaskModal({
                         ${
                           formData.priority === option.value
                             ? `border-${option.color.replace('bg-', '')} ${option.color} text-[#111] font-bold`
-                            : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-white/[0.04] hover:text-gray-900 dark:text-white"
+                            : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/[0.04] hover:text-gray-900 dark:text-white"
                         }
                       `}
                     >
@@ -274,7 +274,7 @@ export function CreateTaskModal({
                         ${
                           formData.category === option.value
                             ? `border-${option.color.replace('bg-', '')} ${option.color} text-[#111] font-bold`
-                            : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-white/[0.04] hover:text-gray-900 dark:text-white"
+                            : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/[0.04] hover:text-gray-900 dark:text-white"
                         }
                       `}
                     >
@@ -291,7 +291,7 @@ export function CreateTaskModal({
                   type="button"
                   onClick={prevStep}
                   disabled={isBusy}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans"
+                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans"
                 >
                   Voltar
                 </button>
@@ -321,7 +321,7 @@ export function CreateTaskModal({
                     value={formData.dueDate}
                     onChange={event => setFormData({ ...formData, dueDate: event.target.value })}
                     disabled={isBusy}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
               </div>
@@ -381,7 +381,7 @@ export function CreateTaskModal({
                           type="button"
                           onClick={() => setIsDeleteConfirmVisible(false)}
                           disabled={isBusy}
-                          className="flex-1 rounded-md border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-3 py-2 text-[10px] font-bold tracking-widest uppercase text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:bg-white/10 transition-colors"
+                          className="flex-1 rounded-md border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-3 py-2 text-[10px] font-bold tracking-widest uppercase text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 transition-colors"
                         >
                           Cancelar
                         </button>
@@ -404,7 +404,7 @@ export function CreateTaskModal({
                   type="button"
                   onClick={prevStep}
                   disabled={isBusy}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
+                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
                 >
                   Voltar
                 </button>

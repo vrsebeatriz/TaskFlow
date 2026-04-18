@@ -66,7 +66,7 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
+      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[13px] font-medium text-gray-600 dark:text-gray-400 font-sans">Produtividade</h3>
           <TrendingUp className="h-4 w-4 text-gray-500 dark:text-gray-500" />
@@ -85,7 +85,7 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
         </p>
       </div>
 
-      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
+      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[13px] font-medium text-gray-600 dark:text-gray-400 font-sans">Para Hoje</h3>
           <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-500" />
@@ -104,7 +104,7 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
         </p>
       </div>
 
-      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
+      <div className="bg-white dark:bg-white/[0.02] rounded-xl p-5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[13px] font-medium text-gray-600 dark:text-gray-400 font-sans">Eficiência</h3>
           <Clock className="h-4 w-4 text-gray-500 dark:text-gray-500" />

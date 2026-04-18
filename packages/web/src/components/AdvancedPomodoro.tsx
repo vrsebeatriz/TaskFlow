@@ -278,7 +278,7 @@ export function AdvancedPomodoro() {
                   className={`rounded-md border px-4 py-2 transition-all duration-200 font-sans ${
                     soundEnabled
                       ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
-                      : "border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:bg-white/10"
+                      : "border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10"
                   }`}
                 >
                   <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
@@ -290,7 +290,7 @@ export function AdvancedPomodoro() {
                 <button
                   type="button"
                   onClick={testSound}
-                  className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-4 py-2 text-gray-700 dark:text-gray-300 transition-all duration-200 hover:bg-gray-200 dark:bg-white/10"
+                  className="rounded-md border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-4 py-2 text-gray-700 dark:text-gray-300 transition-all duration-200 hover:bg-gray-200 dark:hover:bg-white/10"
                 >
                   <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
                     <Volume2 className="h-4 w-4" />
@@ -408,7 +408,7 @@ export function AdvancedPomodoro() {
               <button
                 type="button"
                 onClick={resetTimer}
-                className="inline-flex items-center gap-3 rounded-md border border-gray-300 dark:border-white/20 bg-transparent px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300 transition-all hover:bg-gray-100 dark:bg-white/5 font-sans"
+                className="inline-flex items-center gap-3 rounded-md border border-gray-300 dark:border-white/20 bg-transparent px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300 transition-all hover:bg-gray-100 dark:hover:bg-white/5 font-sans"
               >
                 <RotateCcw className="h-4 w-4" />
                 Resetar
@@ -418,7 +418,7 @@ export function AdvancedPomodoro() {
         </section>
 
         <aside className="flex flex-col gap-6">
-          <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 flex-1 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
+          <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 flex-1 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/20">
                 <TimerReset className="h-5 w-5" />
@@ -451,7 +451,7 @@ export function AdvancedPomodoro() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 flex-1 hover:bg-gray-50 dark:bg-white/[0.04] transition-colors">
+          <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 flex-1 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
                 <Coffee className="h-5 w-5" />
@@ -509,7 +509,7 @@ export function AdvancedPomodoro() {
               <button
                 type="button"
                 onClick={() => setShowSettings(false)}
-                className="rounded-md p-2 text-gray-500 dark:text-gray-500 hover:bg-gray-100 dark:bg-white/5 hover:text-gray-900 dark:text-white transition-colors border border-transparent hover:border-gray-200 dark:border-white/10"
+                className="rounded-md p-2 text-gray-500 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:text-white transition-colors border border-transparent hover:border-gray-200 dark:border-white/10"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -529,7 +529,7 @@ export function AdvancedPomodoro() {
                       focusTime: Math.max(1, Math.min(60, parseInt(event.target.value, 10) || 25)),
                     }))
                   }
-                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                 />
               </div>
 
@@ -550,7 +550,7 @@ export function AdvancedPomodoro() {
                         ),
                       }))
                     }
-                    className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
 
@@ -570,7 +570,7 @@ export function AdvancedPomodoro() {
                         ),
                       }))
                     }
-                    className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                   />
                 </div>
               </div>
@@ -593,7 +593,7 @@ export function AdvancedPomodoro() {
                       ),
                     }))
                   }
-                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
                 />
               </div>
 
@@ -601,7 +601,7 @@ export function AdvancedPomodoro() {
                 <button
                   type="button"
                   onClick={() => setShowSettings(false)}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
+                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
                 >
                   Fechar
                 </button>

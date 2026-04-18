@@ -35,7 +35,7 @@ const TaskCard = memo(function TaskCard({
         'rounded-xl border p-5',
         'transition-[transform,border-color,box-shadow,background-color,opacity] duration-200 ease-out',
         'transform-gpu will-change-transform',
-        'bg-white dark:bg-white/[0.02] hover:bg-gray-50 dark:bg-white/[0.04]',
+        'bg-white dark:bg-white/[0.02] hover:bg-gray-50 dark:hover:bg-white/[0.04]',
         priorityColors[task.priority],
         isElevated
           ? 'scale-[1.015] border-gray-300 dark:border-white/20 shadow-[0_20px_50px_rgba(2,6,23,0.42)]'
