@@ -8,7 +8,10 @@ import {
   Plus,
   Search,
   Bell,
-  Activity
+  Activity,
+  Calendar,
+  AlertTriangle,
+  X
 } from "lucide-react";
 
 // Componentes Core
@@ -51,6 +54,8 @@ function AppContent() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(true);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const { user, logout } = useAuth() as any;
   const { addToast } = useToast();
@@ -115,6 +120,30 @@ function AppContent() {
       return false;
     }
   };
+
+  const filteredTasks = tasks.filter(task => {
+    if (!searchQuery) return true;
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      (task.description && task.description.toLowerCase().includes(searchLower)) ||
+      (task.category && task.category.toLowerCase().includes(searchLower)) ||
+      (task.priority && task.priority.toLowerCase().includes(searchLower))
+    );
+  });
+
+  const overdueTasks = tasks.filter(task => {
+    if (!task.dueDate || task.status === "completed") return false;
+    return new Date(task.dueDate) < new Date(new Date().setHours(0, 0, 0, 0));
+  });
+
+  const todayTasks = tasks.filter(task => {
+    if (!task.dueDate || task.status === "completed") return false;
+    const today = new Date();
+    const dueDate = new Date(task.dueDate);
+    return dueDate.toDateString() === today.toDateString();
+  });
+
+  const notificationsCount = overdueTasks.length + todayTasks.length;
 
   if (!user) {
     return (
@@ -183,7 +212,7 @@ function AppContent() {
 
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-6 hide-scrollbar">
           <div>
-            <p className="px-3 text-xs font-medium text-gray-500 mb-2 font-mono uppercase tracking-wider">Overview</p>
+            <p className="px-3 text-xs font-medium text-gray-500 mb-2 font-mono uppercase tracking-wider">Visão Geral</p>
             <div className="space-y-0.5">
               <button 
                 onClick={() => setActiveTab('dashboard')} 
@@ -194,7 +223,7 @@ function AppContent() {
                 }`}
               >
                 <LayoutDashboard size={16} />
-                <span className="text-[13px] font-medium">Dashboard</span>
+                <span className="text-[13px] font-medium">Painel</span>
               </button>
               <button 
                 onClick={() => setActiveTab('kanban')} 
@@ -205,7 +234,7 @@ function AppContent() {
                 }`}
               >
                 <ClipboardList size={16} />
-                <span className="text-[13px] font-medium">Kanban Board</span>
+                <span className="text-[13px] font-medium">Quadro Kanban</span>
               </button>
               <button 
                 onClick={() => setActiveTab('pomodoro')} 
@@ -216,7 +245,7 @@ function AppContent() {
                 }`}
               >
                 <Timer size={16} />
-                <span className="text-[13px] font-medium">Pomodoro Timer</span>
+                <span className="text-[13px] font-medium">Timer Pomodoro</span>
               </button>
             </div>
           </div>
@@ -229,7 +258,7 @@ function AppContent() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-medium text-gray-200 truncate">{user.name}</p>
-              <p className="text-[11px] text-gray-500 truncate">Workspace User</p>
+              <p className="text-[11px] text-gray-500 truncate">Membro da Equipe</p>
             </div>
             <button onClick={logout} className="text-gray-500 hover:text-red-400 transition-colors">
               <LogOut size={14} />
@@ -242,10 +271,10 @@ function AppContent() {
       <main className="flex-1 flex flex-col min-w-0 bg-[#000000] relative">
         <header className="h-16 flex items-center justify-between px-6 lg:px-8 border-b border-white/10 bg-[#000000]/90 backdrop-blur-xl sticky top-0 z-20">
           <div className="flex items-center gap-2 text-[13px] text-gray-400 font-mono">
-            <span className="hover:text-gray-100 cursor-pointer transition-colors">Workspace</span>
+            <span className="hover:text-gray-100 cursor-pointer transition-colors">Espaço de Trabalho</span>
             <span>/</span>
             <span className="text-gray-100 font-medium">
-              {activeTab === 'kanban' ? 'Kanban' : activeTab === 'dashboard' ? 'Dashboard' : 'Timer'}
+              {activeTab === 'kanban' ? 'Quadro' : activeTab === 'dashboard' ? 'Painel' : 'Timer'}
             </span>
           </div>
           <div className="flex items-center gap-4">
@@ -256,15 +285,82 @@ function AppContent() {
               <Plus size={14} className="relative z-10 transition-transform duration-300 group-hover:rotate-90" />
               <span className="relative z-10 hidden sm:inline">Nova Tarefa</span>
             </button>
-            <div className="hidden sm:flex items-center bg-white/[0.03] border border-white/10 rounded-md px-3 py-1.5 focus-within:border-white/20 transition-all w-64 group">
+            <div className="hidden sm:flex items-center bg-white/[0.03] border border-white/10 rounded-md px-3 py-1.5 focus-within:border-white/20 transition-all w-64 group relative">
               <Search className="text-gray-500 mr-2" size={14} />
-              <input className="bg-transparent border-none outline-none text-[13px] text-gray-200 w-full placeholder:text-gray-600" placeholder="Search tasks..." type="text" />
-              <span className="text-[10px] font-medium text-gray-500 border border-white/10 rounded px-1.5 py-0.5">/</span>
+              <input 
+                className="bg-transparent border-none outline-none text-[13px] text-gray-200 w-full placeholder:text-gray-600" 
+                placeholder="Buscar tarefas..." 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery ? (
+                <button onClick={() => setSearchQuery("")} className="absolute right-2 text-gray-500 hover:text-gray-300">
+                  <X size={12} />
+                </button>
+              ) : (
+                <span className="text-[10px] font-medium text-gray-500 border border-white/10 rounded px-1.5 py-0.5">/</span>
+              )}
             </div>
-            <button className="w-8 h-8 rounded-full border border-white/10 bg-white/[0.02] flex items-center justify-center hover:bg-white/[0.05] transition-colors relative">
-              <span className="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full border-2 border-[#000000]"></span>
-              <Bell className="text-gray-400" size={14} />
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                className="w-8 h-8 rounded-full border border-white/10 bg-white/[0.02] flex items-center justify-center hover:bg-white/[0.05] transition-colors relative"
+              >
+                {notificationsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-blue-500 rounded-full border-2 border-[#000000] flex items-center justify-center text-[8px] font-bold text-white">
+                    {notificationsCount}
+                  </span>
+                )}
+                <Bell className={`text-gray-400 transition-colors ${isNotificationsOpen ? 'text-gray-200' : ''}`} size={14} />
+              </button>
+
+              {isNotificationsOpen && (
+                <div className="absolute right-0 top-12 w-80 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 overflow-hidden animate-in fade-in duration-200">
+                  <div className="p-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+                    <h3 className="text-[11px] font-mono font-bold uppercase tracking-widest text-gray-300">Notificações</h3>
+                    <span className="text-[10px] font-mono text-gray-500">{notificationsCount} alertas</span>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto hide-scrollbar p-2">
+                    {notificationsCount === 0 ? (
+                      <div className="p-6 text-center text-gray-500">
+                        <Bell className="mx-auto h-6 w-6 opacity-20 mb-2" />
+                        <p className="text-[11px] font-mono uppercase tracking-widest">Nenhuma notificação</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        {overdueTasks.map(task => (
+                          <div key={`overdue-${task.id}`} className="p-3 rounded-lg hover:bg-white/[0.04] transition-colors cursor-default border border-transparent hover:border-red-500/20 group">
+                            <div className="flex items-start gap-3">
+                              <div className="p-1.5 rounded-md bg-red-500/10 text-red-400 mt-0.5">
+                                <AlertTriangle size={12} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[12px] font-medium text-gray-200 truncate">{task.description}</p>
+                                <p className="text-[10px] text-red-400 mt-1">Atrasada</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        {todayTasks.map(task => (
+                          <div key={`today-${task.id}`} className="p-3 rounded-lg hover:bg-white/[0.04] transition-colors cursor-default border border-transparent hover:border-blue-500/20 group">
+                            <div className="flex items-start gap-3">
+                              <div className="p-1.5 rounded-md bg-blue-500/10 text-blue-400 mt-0.5">
+                                <Calendar size={12} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[12px] font-medium text-gray-200 truncate">{task.description}</p>
+                                <p className="text-[10px] text-blue-400 mt-1">Vence hoje</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
@@ -272,11 +368,11 @@ function AppContent() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 animate-in">
             <div>
               <h1 className="text-2xl tracking-tight text-gray-100 font-medium mb-1 font-manrope">
-                {activeTab === 'kanban' ? 'Task Board' : activeTab === 'dashboard' ? 'Performance Insights' : 'Focus Timer'}
+                {activeTab === 'kanban' ? 'Quadro de Tarefas' : activeTab === 'dashboard' ? 'Desempenho' : 'Timer de Foco'}
               </h1>
               <div className="flex items-center gap-2 text-[13px] text-gray-400">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                System operating normally
+                Sistema operando normalmente
               </div>
             </div>
           </div>
@@ -285,13 +381,13 @@ function AppContent() {
             {isLoading ? (
               <div className="h-full flex items-center justify-center min-h-[400px]">
                 <div className="text-gray-500 animate-pulse font-mono tracking-widest text-sm uppercase">
-                  Loading data...
+                  Carregando dados...
                 </div>
               </div>
             ) : activeTab === 'kanban' ? (
               <div className="h-full">
                 <KanbanBoard 
-                  tasks={tasks} 
+                  tasks={filteredTasks} 
                   onTaskMove={handleTaskMove} 
                   onEditTask={setEditingTask} 
                 />
@@ -302,27 +398,27 @@ function AppContent() {
               </div>
             ) : activeTab === 'dashboard' ? (
               <div className="flex flex-col gap-6 pb-10">
-                <DashboardStats tasks={tasks} />
+                <DashboardStats tasks={filteredTasks} />
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="rounded-xl border border-white/10 bg-white/[0.01] p-6 flex flex-col">
-                    <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Task Distribution</h3>
+                    <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Distribuição de Tarefas</h3>
                     <div className="flex-1">
-                      <ProductivityChart tasks={tasks} />
+                      <ProductivityChart tasks={filteredTasks} />
                     </div>
                   </div>
                   
                   <div className="rounded-xl border border-white/10 bg-white/[0.01] p-6 flex flex-col">
-                    <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Status Overview</h3>
+                    <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Visão Geral de Status</h3>
                     <div className="flex-1">
-                      <StatsOverview tasks={tasks} />
+                      <StatsOverview tasks={filteredTasks} />
                     </div>
                   </div>
                 </div>
 
                 <div className="rounded-xl border border-white/10 bg-white/[0.01] p-6">
-                  <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Weekly Efficiency</h3>
-                  <AnimatedCharts tasks={tasks} />
+                  <h3 className="text-sm font-medium text-gray-100 mb-6 font-manrope">Eficiência Semanal</h3>
+                  <AnimatedCharts tasks={filteredTasks} />
                 </div>
               </div>
             ) : null}

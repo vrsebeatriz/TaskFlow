@@ -20,7 +20,7 @@ export function DashboardStats({ tasks }: DashboardStatsProps) {
   const statCards = [
     {
       icon: Target,
-      label: "Total Tasks",
+      label: "Total de Tarefas",
       value: total,
       subValue: "",
     },

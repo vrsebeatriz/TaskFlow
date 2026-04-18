@@ -171,7 +171,7 @@ export function CreateTaskModal({
               </div>
               <div>
                 <h2 className="text-[13px] font-mono font-bold uppercase tracking-[0.2em] text-white">
-                  {isEditMode ? "Editar Task" : "Nova Task"}
+                  {isEditMode ? "Editar Tarefa" : "Nova Tarefa"}
                 </h2>
                 <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest mt-1">Passo {step} de 3</p>
               </div>
@@ -205,7 +205,7 @@ export function CreateTaskModal({
                 <textarea
                   value={formData.description}
                   onChange={event => setFormData({ ...formData, description: event.target.value })}
-                  placeholder="Descreva sua task..."
+                  placeholder="Descreva sua tarefa..."
                   rows={4}
                   className="w-full px-4 py-3 border border-white/10 bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-white/[0.04] transition-all duration-200 text-gray-200 text-[13px] resize-none outline-none font-sans"
                   required
@@ -327,7 +327,7 @@ export function CreateTaskModal({
               </div>
 
               <div className="bg-white/[0.02] rounded-xl p-4 border border-white/10">
-                <h4 className="text-[11px] font-mono text-gray-500 uppercase tracking-widest mb-2">Preview</h4>
+                <h4 className="text-[11px] font-mono text-gray-500 uppercase tracking-widest mb-2">Visualização</h4>
                 <p className="text-gray-200 text-[13px] font-sans">{formData.description}</p>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[10px] font-mono uppercase tracking-widest">
@@ -374,7 +374,7 @@ export function CreateTaskModal({
                   {isDeleteConfirmVisible && (
                     <div className="mt-4 border-t border-red-500/20 pt-4">
                       <p className="text-[11px] text-gray-400 font-sans">
-                        Tem certeza que deseja excluir esta task?
+                        Tem certeza que deseja excluir esta tarefa?
                       </p>
                       <div className="mt-3 flex gap-3">
                         <button
@@ -413,7 +413,7 @@ export function CreateTaskModal({
                   disabled={isBusy}
                   className="flex-1 bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-3 px-4 transition-all hover:bg-blue-500 disabled:opacity-50 font-sans rounded-none"
                 >
-                  {isSubmitting ? "..." : isEditMode ? "Salvar Task" : "Criar Task"}
+                  {isSubmitting ? "..." : isEditMode ? "Salvar Tarefa" : "Criar Tarefa"}
                 </button>
               </div>
             </div>

@@ -23,14 +23,14 @@ export function StatsOverview({ tasks }: StatsOverviewProps) {
       label: "Total",
       value: total,
       color: "bg-white/[0.02] text-gray-400",
-      description: "Tasks totais",
+      description: "Tarefas totais",
     },
     {
       icon: CheckCircle,
       label: "Concluídas",
       value: completed,
       color: "bg-emerald-500/10 text-emerald-400",
-      description: "Tasks finalizadas",
+      description: "Tarefas finalizadas",
     },
     {
       icon: Clock,

@@ -15,6 +15,13 @@ const priorityColors = {
   low: 'border-emerald-500/50 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
 } as const;
 
+const categoryLabels: Record<string, string> = {
+  work: 'Trabalho',
+  personal: 'Pessoal',
+  learning: 'Estudo',
+  health: 'Saúde'
+};
+
 const TaskCard = memo(function TaskCard({
   task,
   isDragging = false,
@@ -56,7 +63,7 @@ const TaskCard = memo(function TaskCard({
           )}
           <span className="flex min-w-0 items-center gap-1.5 uppercase tracking-[0.1em] text-[10px] text-gray-500">
             <Tag size={12} className="shrink-0" />
-            <span className="truncate">{task.category}</span>
+            <span className="truncate">{task.category ? (categoryLabels[task.category] || task.category) : ''}</span>
           </span>
         </div>
 

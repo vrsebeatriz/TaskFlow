@@ -81,7 +81,7 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
           />
         </div>
         <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-          {completedTasks} de {totalTasks} tasks concluídas
+          {completedTasks} de {totalTasks} tarefas concluídas
         </p>
       </div>
 
@@ -100,7 +100,7 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
           />
         </div>
         <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-          Tasks com vencimento para hoje
+          Tarefas com vencimento para hoje
         </p>
       </div>
 
@@ -121,7 +121,7 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
         <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
           {avgCompletionTime > 0
             ? `Tempo médio (${Math.round(efficiencyScore)}% eficiência)`
-            : "Nenhuma task concluída ainda"}
+            : "Nenhuma tarefa concluída ainda"}
         </p>
       </div>
     </div>

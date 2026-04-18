@@ -262,7 +262,7 @@ export function AdvancedPomodoro() {
                   </div>
                   <div>
                     <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-gray-500">
-                      Focus System
+                      Sistema de Foco
                     </p>
                     <h3 className="text-xl font-manrope font-bold text-gray-100">
                       Pomodoro
@@ -411,7 +411,7 @@ export function AdvancedPomodoro() {
                 className="inline-flex items-center gap-3 rounded-md border border-white/20 bg-transparent px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-300 transition-all hover:bg-white/5 font-sans"
               >
                 <RotateCcw className="h-4 w-4" />
-                Reset
+                Resetar
               </button>
             </div>
           </div>
