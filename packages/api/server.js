@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import cors from 'cors';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
@@ -26,8 +26,13 @@ app.use(express.json());
 // Database setup
 const dbPath = join(__dirname, 'db.json');
 const adapter = new JSONFile(dbPath);
-const db = new Low(adapter, { users: [], tasks: [], idCounter: 1 });
+const defaultData = { users: [], tasks: [], idCounter: 1 };
+const db = new Low(adapter, defaultData);
 await db.read();
+if (!db.data) {
+  db.data = defaultData;
+  await db.write();
+}
 
 // Middleware para verificar o Token JWT [CITE: 1]
 const authenticateToken = (req, res, next) => {
