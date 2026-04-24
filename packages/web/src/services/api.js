@@ -67,5 +67,40 @@ export const authService = {
   }
 };
 
+export const habitsService = {
+  getAll: async () => { const r = await api.get('/habits'); return r.data; },
+  create: async (data) => { const r = await api.post('/habits', data); return r.data; },
+  delete: async (id) => { const r = await api.delete(`/habits/${id}`); return r.data; },
+  getLogs: async () => { const r = await api.get('/habitLogs'); return r.data; },
+  logHabit: async (data) => { const r = await api.post('/habitLogs', data); return r.data; }
+};
+
+export const workoutsService = {
+  getAll: async () => { const r = await api.get('/workouts'); return r.data; },
+  create: async (data) => { const r = await api.post('/workouts', data); return r.data; },
+  update: async (id, data) => { const r = await api.put(`/workouts/${id}`, data); return r.data; },
+  delete: async (id) => { const r = await api.delete(`/workouts/${id}`); return r.data; }
+};
+
+export const goalsService = {
+  getAll: async () => { const r = await api.get('/goals'); return r.data; },
+  create: async (data) => { const r = await api.post('/goals', data); return r.data; },
+  update: async (id, data) => { const r = await api.put(`/goals/${id}`, data); return r.data; },
+  delete: async (id) => { const r = await api.delete(`/goals/${id}`); return r.data; }
+};
+
+export const financesService = {
+  getTransactions: async () => { const r = await api.get('/transactions'); return r.data; },
+  createTransaction: async (data) => { const r = await api.post('/transactions', data); return r.data; },
+  deleteTransaction: async (id) => { const r = await api.delete(`/transactions/${id}`); return r.data; },
+  analyze: async (data) => { const r = await api.post('/finances/analyze', data); return r.data; }
+};
+
+export const dietService = {
+  getAll: async () => { const r = await api.get('/meals'); return r.data; },
+  create: async (data) => { const r = await api.post('/meals', data); return r.data; },
+  delete: async (id) => { const r = await api.delete(`/meals/${id}`); return r.data; }
+};
+
 // Exportação padrão para garantir compatibilidade com o App.tsx
 export default api;

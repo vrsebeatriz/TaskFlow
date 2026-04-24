@@ -26,3 +26,56 @@ export interface User {
   name: string;
   email: string;
 }
+
+export interface Habit {
+  id: number;
+  userId: number;
+  title: string;
+  frequency: string;
+  emoji?: string;
+}
+
+export interface HabitLog {
+  id: number;
+  habitId: number;
+  userId: number;
+  date: string;
+  completed: boolean;
+}
+
+export interface WorkoutSet {
+  weight: number;
+  reps: number;
+}
+
+export interface WorkoutExercise {
+  name: string;
+  sets: WorkoutSet[];
+}
+
+export interface Workout {
+  id: number;
+  userId: number;
+  name: string;
+  date: string;
+  exercises: WorkoutExercise[];
+}
+
+export interface Goal {
+  id: number;
+  userId: number;
+  title: string;
+  category: string;
+  targetValue: number;
+  currentValue: number;
+  deadline?: string;
+}
+
+export interface Transaction {
+  id: number;
+  userId: number;
+  description: string;
+  amount: number;
+  type: 'income' | 'expense';
+  date: string;
+}

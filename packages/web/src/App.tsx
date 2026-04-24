@@ -13,7 +13,11 @@ import {
   AlertTriangle,
   X,
   Sun,
-  Moon
+  Moon,
+  Target,
+  Dumbbell,
+  DollarSign,
+  CheckCircle2
 } from "lucide-react";
 
 // Componentes Core
@@ -24,6 +28,12 @@ import { EditTaskModal } from "./components/EditTaskModal";
 import { ToastProvider, useToast } from "./components/Toast";
 import { AdvancedPomodoro } from "./components/AdvancedPomodoro";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+
+// Componentes Life OS
+import { HabitTracker } from "./components/HabitTracker";
+import { WorkoutDashboard } from "./components/WorkoutDashboard";
+import { GoalsOverview } from "./components/GoalsOverview";
+import { FinanceDashboard } from "./components/FinanceDashboard";
 
 // Componentes de Estatísticas
 import { DashboardStats } from "./components/DashboardStats";
@@ -217,7 +227,7 @@ function AppContent() {
 
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-6 hide-scrollbar">
           <div>
-            <p className="px-3 text-xs font-medium text-gray-500 mb-2 font-mono uppercase tracking-wider">Visão Geral</p>
+            <p className="px-3 text-xs font-medium text-gray-500 mb-2 font-mono uppercase tracking-wider">Produtividade acadêmica</p>
             <div className="space-y-0.5">
               <button 
                 onClick={() => setActiveTab('dashboard')} 
@@ -254,6 +264,48 @@ function AppContent() {
               </button>
             </div>
           </div>
+
+          <div>
+            <p className="px-3 text-xs font-medium text-gray-500 mb-2 mt-4 font-mono uppercase tracking-wider">Life OS</p>
+            <div className="space-y-0.5">
+              <button 
+                onClick={() => setActiveTab('habits')} 
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === 'habits' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/5'
+                }`}
+              >
+                <CheckCircle2 size={16} />
+                <span className="text-[13px] font-medium">Hábitos</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('workouts')} 
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === 'workouts' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/5'
+                }`}
+              >
+                <Dumbbell size={16} />
+                <span className="text-[13px] font-medium">Treinos</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('goals')} 
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === 'goals' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/5'
+                }`}
+              >
+                <Target size={16} />
+                <span className="text-[13px] font-medium">Metas</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('finances')} 
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === 'finances' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/5'
+                }`}
+              >
+                <DollarSign size={16} />
+                <span className="text-[13px] font-medium">Finanças</span>
+              </button>
+            </div>
+          </div>
         </nav>
 
         <div className="p-4 border-t border-gray-200 dark:border-white/10">
@@ -279,16 +331,35 @@ function AppContent() {
             <span className="hover:text-gray-900 dark:hover:text-gray-100 cursor-pointer transition-colors">Espaço de Trabalho</span>
             <span>/</span>
             <span className="text-gray-900 dark:text-gray-100 font-medium">
-              {activeTab === 'kanban' ? 'Quadro' : activeTab === 'dashboard' ? 'Painel' : 'Timer'}
+              {activeTab === 'kanban' ? 'Quadro' : 
+               activeTab === 'dashboard' ? 'Painel' : 
+               activeTab === 'pomodoro' ? 'Timer' : 
+               activeTab === 'habits' ? 'Hábitos' :
+               activeTab === 'workouts' ? 'Treinos' :
+               activeTab === 'goals' ? 'Metas' : 'Finanças'}
             </span>
           </div>
           <div className="flex items-center gap-4">
             <button 
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => {
+                if (activeTab === 'kanban' || activeTab === 'dashboard') {
+                  setIsCreateModalOpen(true);
+                } else {
+                  // Dispara evento para o módulo ativo abrir seu formulário
+                  window.dispatchEvent(new CustomEvent('lifeos:add', { detail: activeTab }));
+                }
+              }}
               className="group relative inline-flex items-center gap-2 bg-blue-600 px-4 py-2 text-[11px] font-bold tracking-[0.2em] text-white transition-all hover:bg-blue-700 dark:hover:bg-blue-500 font-sans uppercase rounded-none shadow-sm"
             >
               <Plus size={14} className="relative z-10 transition-transform duration-300 group-hover:rotate-90" />
-              <span className="relative z-10 hidden sm:inline">Nova Tarefa</span>
+              <span className="relative z-10 hidden sm:inline">
+                {activeTab === 'habits' ? 'Novo Hábito' :
+                 activeTab === 'workouts' ? 'Novo Registro' :
+                 activeTab === 'goals' ? 'Nova Meta' :
+                 activeTab === 'finances' ? 'Nova Movimentação' :
+                 activeTab === 'pomodoro' ? 'Nova Tarefa' :
+                 'Nova Tarefa'}
+              </span>
             </button>
             <div className="hidden sm:flex items-center bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-md px-3 py-1.5 focus-within:border-blue-500 dark:focus-within:border-white/20 transition-all w-64 group relative">
               <Search className="text-gray-500 mr-2" size={14} />
@@ -378,17 +449,20 @@ function AppContent() {
         </header>
 
         <div className="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6 hide-scrollbar relative z-10">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 animate-in">
-            <div>
-              <h1 className="text-2xl tracking-tight text-gray-900 dark:text-gray-100 font-medium mb-1 font-manrope">
-                {activeTab === 'kanban' ? 'Quadro de Tarefas' : activeTab === 'dashboard' ? 'Desempenho' : 'Timer de Foco'}
-              </h1>
-              <div className="flex items-center gap-2 text-[13px] text-gray-500 dark:text-gray-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Sistema operando normalmente
+          {(activeTab === 'kanban' || activeTab === 'dashboard' || activeTab === 'pomodoro') && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 animate-in">
+              <div>
+                <h1 className="text-2xl tracking-tight text-gray-900 dark:text-gray-100 font-medium mb-1 font-manrope">
+                  {activeTab === 'kanban' ? 'Quadro de Tarefas' : 
+                   activeTab === 'dashboard' ? 'Desempenho' : 'Timer de Foco'}
+                </h1>
+                <div className="flex items-center gap-2 text-[13px] text-gray-500 dark:text-gray-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Sistema operando normalmente
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div key={activeTab} className="animate-in min-h-full flex flex-col">
             {isLoading ? (
@@ -433,6 +507,22 @@ function AppContent() {
                   <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-6 font-manrope">Eficiência Semanal</h3>
                   <AnimatedCharts tasks={filteredTasks} />
                 </div>
+              </div>
+            ) : activeTab === 'habits' ? (
+              <div className="h-full pt-4">
+                <HabitTracker searchQuery={searchQuery} />
+              </div>
+            ) : activeTab === 'workouts' ? (
+              <div className="h-full pt-4">
+                <WorkoutDashboard searchQuery={searchQuery} />
+              </div>
+            ) : activeTab === 'goals' ? (
+              <div className="h-full pt-4">
+                <GoalsOverview searchQuery={searchQuery} />
+              </div>
+            ) : activeTab === 'finances' ? (
+              <div className="h-full pt-4">
+                <FinanceDashboard searchQuery={searchQuery} />
               </div>
             ) : null}
           </div>

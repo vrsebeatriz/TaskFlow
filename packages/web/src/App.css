@@ -89,10 +89,13 @@ body {
 .font-inter { font-family: 'Inter', sans-serif !important; }
 .font-mono { font-family: 'JetBrains Mono', monospace !important; }
 
-/* Focus states globally */
+/* Focus states globally — remove default outline */
 *:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: none;
+}
+
+*:focus {
+  outline: none;
 }
 
 /* Date input styling */
