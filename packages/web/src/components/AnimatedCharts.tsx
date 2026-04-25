@@ -110,7 +110,7 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
           <Clock className="h-4 w-4 text-gray-500 dark:text-gray-500" />
         </div>
         <div className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 font-manrope mb-4">
-          {formatTimeDisplay()}
+          {Math.round(efficiencyScore)}%
         </div>
         <div className="w-full bg-gray-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden mb-2">
           <div
@@ -120,7 +120,7 @@ export function AnimatedCharts({ tasks = [] }: AnimatedChartsProps) {
         </div>
         <p className="text-[10px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-widest">
           {avgCompletionTime > 0
-            ? `Tempo médio (${Math.round(efficiencyScore)}% eficiência)`
+            ? `Tempo Médio: ${formatTimeDisplay()}`
             : "Nenhuma tarefa concluída ainda"}
         </p>
       </div>

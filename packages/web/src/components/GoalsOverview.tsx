@@ -231,7 +231,7 @@ export function GoalsOverview({ searchQuery = "" }: GoalsOverviewProps) {
                      </div>
                      <button 
                        onClick={() => handleDeleteGoal(goal.id)}
-                       className="text-gray-400 hover:text-red-500 transition-colors p-1 opacity-0 group-hover:opacity-100"
+                       className="text-gray-400 hover:text-red-500 transition-colors p-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
                      >
                        <Trash2 size={16} />
                      </button>

@@ -38,6 +38,15 @@ TaskFlow Pro goes beyond a simple to-do list, offering a comprehensive suite of 
 * **Global Ecosystem Search:** Search across all modules—tasks, habits, workouts, diet, and finances—from a single unified search bar.
 * **Fluid Micro-interactions:** Cinematic layout transitions and drag-and-drop physics powered by **Framer Motion**.
 
+### 📱 Mobile-First & PWA
+* **Progressive Web App (PWA):** Instale o TaskFlow Pro diretamente no seu iPhone ou Android. Funciona como um aplicativo nativo.
+* **Interface Responsiva:** Navegação lateral (Drawer) otimizada para telas pequenas e gestos de toque.
+* **Ações Rápidas:** Todos os modais e botões foram refinados para o uso com uma mão, garantindo que o seu Life OS esteja sempre no seu bolso.
+
+### 📊 Performance Analytics
+* **Efficiency Engine:** Monitoramento em tempo real do tempo médio de conclusão das tarefas, transformado em uma porcentagem de eficiência.
+* **Visualização de Dados:** Gráficos interativos para produtividade semanal e metas de hábitos que se ajustam dinamicamente.
+
 ---
 
 ## Life OS Ecosystem
@@ -67,7 +76,7 @@ This project is structured as a **Monorepo** using npm workspaces, enforcing str
 
 ```mermaid
 graph TD;
-    A[Client Browser] -->|HTTP / REST| B[Vite Proxy: 5173]
+    A[Client Browser / Mobile PWA] -->|HTTP / REST| B[Vite Proxy: 5173]
     B -->|API Requests| C[Express.js API: 3001]
     C -->|Read/Write| D[(LowDB JSON Store)]
     C -->|AI Analysis| E[Google Gemini API]
@@ -75,6 +84,7 @@ graph TD;
 
 ### Frontend (packages/web)
 - **Framework:** React 18 + TypeScript
+- **PWA Integration:** Vite PWA Plugin + iOS Standalone Support
 - **Styling:** Tailwind CSS v4 + Vanilla CSS
 - **Animation:** Framer Motion
 - **Icons:** Lucide React
@@ -116,7 +126,7 @@ Open two terminals:
 cd packages/api && node server.js
 
 # Terminal 2: Frontend
-cd packages/web && npm run dev
+cd packages/web && npm run dev -- --host
 ```
 
 ---
@@ -130,7 +140,7 @@ cd packages/web && npm run dev
 - [x] **Life OS Integration (Workouts, Diet, Habits, Finances, Goals)**
 - [x] **AI-Powered Financial Insights**
 - [x] **Unified Global Search Engine**
-- [ ] Mobile-First Responsive Overhaul
+- [x] **Mobile-First Responsive Overhaul & PWA Support**
 - [ ] Export Data to CSV/JSON for portability
 - [ ] Collaborative Workspaces (WebSockets)
 

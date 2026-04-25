@@ -98,6 +98,9 @@ export function HabitTracker({ searchQuery = "" }: HabitTrackerProps) {
     }
   };
 
+  // Filtra logs apenas de hábitos que ainda existem
+  const activeLogs = logs.filter(l => habits.some(h => h.id === l.habitId));
+
   // Calcula Streak para a semana
   const getChartData = () => {
     const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
@@ -110,7 +113,7 @@ export function HabitTracker({ searchQuery = "" }: HabitTrackerProps) {
       const dateStr = d.toISOString().split('T')[0];
       
       // Quantos hábitos completados neste dia
-      const completedCount = logs.filter(l => l.date === dateStr && l.completed).length;
+      const completedCount = activeLogs.filter(l => l.date === dateStr && l.completed).length;
       
       data.push({
         name: days[d.getDay()],
@@ -122,8 +125,8 @@ export function HabitTracker({ searchQuery = "" }: HabitTrackerProps) {
   };
 
   const chartData = getChartData();
-  const completedToday = logs.filter(l => l.date === today && l.completed).length;
-  const streak = logs.filter(l => l.completed).length; // Simplificação do streak total
+  const completedToday = activeLogs.filter(l => l.date === today && l.completed).length;
+  const streak = activeLogs.filter(l => l.completed).length; // Simplificação do streak total
 
   if (loading) {
     return <div className="p-8 text-center text-gray-500 font-mono text-sm">Carregando Hábitos...</div>;
@@ -171,7 +174,7 @@ export function HabitTracker({ searchQuery = "" }: HabitTrackerProps) {
                 <div className="flex gap-2">
                    <input 
                      autoFocus
-                     className="flex-1 bg-gray-100 dark:bg-white/5 border-none rounded-xl px-4 py-3 text-[14px] outline-none" 
+                     className="flex-1 min-w-0 bg-gray-100 dark:bg-white/5 border-none rounded-xl px-4 py-3 text-[14px] outline-none" 
                      placeholder="Ex: Meditar" 
                      value={newHabitTitle}
                      onChange={e => setNewHabitTitle(e.target.value)}
@@ -209,10 +212,10 @@ export function HabitTracker({ searchQuery = "" }: HabitTrackerProps) {
                     </span>
                     <span className="text-[10px] uppercase tracking-widest text-gray-400 font-mono">Diário</span>
                   </div>
-                  <button 
-                    onClick={(e) => handleDeleteHabit(e, habit.id)}
-                    className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1"
-                  >
+                   <button 
+                     onClick={(e) => handleDeleteHabit(e, habit.id)}
+                     className="text-gray-400 hover:text-red-500 transition-colors opacity-100 lg:opacity-0 lg:group-hover:opacity-100 p-1"
+                   >
                     <Trash2 size={16} />
                   </button>
                 </div>

@@ -101,6 +101,8 @@ body {
 /* Date input styling */
 input[type="date"] {
   color-scheme: dark;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {

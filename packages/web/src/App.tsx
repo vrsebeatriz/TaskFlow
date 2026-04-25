@@ -15,6 +15,7 @@ import {
   Sun,
   Moon,
   Target,
+  Menu,
   Dumbbell,
   DollarSign,
   CheckCircle2
@@ -71,6 +72,7 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const { user, logout } = useAuth() as any;
   const { addToast } = useToast();
@@ -94,8 +96,16 @@ function AppContent() {
 
   const handleTaskMove = async (taskId: number, newStatus: Task["status"]) => {
     try {
-      setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: newStatus } : t));
-      await tasksService.updateTask(taskId, { status: newStatus });
+      setTasks(prev => prev.map(t => t.id === taskId ? { 
+        ...t, 
+        status: newStatus,
+        completedAt: newStatus === 'completed' ? new Date().toISOString() : t.completedAt 
+      } : t));
+      const updates: any = { status: newStatus };
+      if (newStatus === 'completed') {
+        updates.completedAt = new Date().toISOString();
+      }
+      await tasksService.updateTask(taskId, updates);
     } catch (error) {
       addToast("Erro ao salvar movimento.", "error");
       loadTasks();
@@ -218,11 +228,27 @@ function AppContent() {
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-[#000000] overflow-hidden text-gray-800 dark:text-slate-300 font-sans transition-colors duration-300">
       
+      {/* OVERLAY MOBILE */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm transition-opacity"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* SIDEBAR */}
-      <aside className="hidden lg:flex flex-col flex-shrink-0 bg-white dark:bg-[#0A0A0A] w-64 h-full border-r border-gray-200 dark:border-white/10 z-30 transition-colors duration-300">
-        <div className="flex h-16 border-b border-gray-200 dark:border-white/10 px-6 items-center gap-3">
-          <CheckSquare className="text-blue-600 dark:text-white" size={20} />
-          <span className="text-sm font-medium tracking-tight text-gray-900 dark:text-white font-manrope">TaskFlow Pro</span>
+      <aside className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-white dark:bg-[#0A0A0A] border-r border-gray-200 dark:border-white/10 transition-transform duration-300 lg:static lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex h-16 border-b border-gray-200 dark:border-white/10 px-6 items-center justify-between">
+          <div className="flex items-center gap-3">
+            <CheckSquare className="text-blue-600 dark:text-white" size={20} />
+            <span className="text-sm font-medium tracking-tight text-gray-900 dark:text-white font-manrope">TaskFlow Pro</span>
+          </div>
+          <button 
+            className="lg:hidden p-1 text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded-md transition-colors"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-6 hide-scrollbar">
@@ -230,7 +256,7 @@ function AppContent() {
             <p className="px-3 text-xs font-medium text-gray-500 mb-2 font-mono uppercase tracking-wider">Produtividade acadêmica</p>
             <div className="space-y-0.5">
               <button 
-                onClick={() => setActiveTab('dashboard')} 
+                onClick={() => { setIsMobileMenuOpen(false); setActiveTab('dashboard'); }} 
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                   activeTab === 'dashboard' 
                     ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' 
@@ -241,7 +267,7 @@ function AppContent() {
                 <span className="text-[13px] font-medium">Painel</span>
               </button>
               <button 
-                onClick={() => setActiveTab('kanban')} 
+                onClick={() => { setIsMobileMenuOpen(false); setActiveTab('kanban'); }} 
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                   activeTab === 'kanban' 
                     ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' 
@@ -252,7 +278,7 @@ function AppContent() {
                 <span className="text-[13px] font-medium">Quadro Kanban</span>
               </button>
               <button 
-                onClick={() => setActiveTab('pomodoro')} 
+                onClick={() => { setIsMobileMenuOpen(false); setActiveTab('pomodoro'); }} 
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                   activeTab === 'pomodoro' 
                     ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' 
@@ -269,7 +295,7 @@ function AppContent() {
             <p className="px-3 text-xs font-medium text-gray-500 mb-2 mt-4 font-mono uppercase tracking-wider">Life OS</p>
             <div className="space-y-0.5">
               <button 
-                onClick={() => setActiveTab('habits')} 
+                onClick={() => { setIsMobileMenuOpen(false); setActiveTab('habits'); }} 
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                   activeTab === 'habits' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/5'
                 }`}
@@ -278,7 +304,7 @@ function AppContent() {
                 <span className="text-[13px] font-medium">Hábitos</span>
               </button>
               <button 
-                onClick={() => setActiveTab('workouts')} 
+                onClick={() => { setIsMobileMenuOpen(false); setActiveTab('workouts'); }} 
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                   activeTab === 'workouts' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/5'
                 }`}
@@ -287,7 +313,7 @@ function AppContent() {
                 <span className="text-[13px] font-medium">Treinos</span>
               </button>
               <button 
-                onClick={() => setActiveTab('goals')} 
+                onClick={() => { setIsMobileMenuOpen(false); setActiveTab('goals'); }} 
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                   activeTab === 'goals' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/5'
                 }`}
@@ -296,7 +322,7 @@ function AppContent() {
                 <span className="text-[13px] font-medium">Metas</span>
               </button>
               <button 
-                onClick={() => setActiveTab('finances')} 
+                onClick={() => { setIsMobileMenuOpen(false); setActiveTab('finances'); }} 
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                   activeTab === 'finances' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-white/5'
                 }`}
@@ -326,10 +352,16 @@ function AppContent() {
 
       {/* CONTEÚDO PRINCIPAL */}
       <main className="flex-1 flex flex-col min-w-0 bg-gray-50 dark:bg-[#000000] relative transition-colors duration-300">
-        <header className="h-16 flex items-center justify-between px-6 lg:px-8 border-b border-gray-200 dark:border-white/10 bg-white/90 dark:bg-[#000000]/90 backdrop-blur-xl sticky top-0 z-20 transition-colors duration-300">
+        <header className="h-16 flex items-center justify-between px-4 lg:px-8 border-b border-gray-200 dark:border-white/10 bg-white/90 dark:bg-[#000000]/90 backdrop-blur-xl sticky top-0 z-20 transition-colors duration-300">
           <div className="flex items-center gap-2 text-[13px] text-gray-500 dark:text-gray-400 font-mono">
-            <span className="hover:text-gray-900 dark:hover:text-gray-100 cursor-pointer transition-colors">Espaço de Trabalho</span>
-            <span>/</span>
+            <button 
+              className="lg:hidden p-1.5 mr-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 rounded-md transition-colors flex items-center justify-center"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu size={18} />
+            </button>
+            <span className="hover:text-gray-900 dark:hover:text-gray-100 cursor-pointer transition-colors hidden sm:inline">Espaço de Trabalho</span>
+            <span className="hidden sm:inline">/</span>
             <span className="text-gray-900 dark:text-gray-100 font-medium">
               {activeTab === 'kanban' ? 'Quadro' : 
                activeTab === 'dashboard' ? 'Painel' : 

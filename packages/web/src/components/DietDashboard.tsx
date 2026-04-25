@@ -171,7 +171,7 @@ export function DietDashboard({ searchQuery = "" }: DietDashboardProps) {
                        <p className="text-[11px] text-gray-500 font-mono mt-1">{meal.calories} kcal • P: {meal.protein}g • C: {meal.carbs}g • G: {meal.fats}g</p>
                     </div>
                  </div>
-                 <button onClick={() => handleDeleteMeal(meal.id)} className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-2">
+                 <button onClick={() => handleDeleteMeal(meal.id)} className="text-gray-400 hover:text-red-500 transition-colors opacity-100 lg:opacity-0 lg:group-hover:opacity-100 p-2">
                    <Trash2 size={16} />
                  </button>
               </div>

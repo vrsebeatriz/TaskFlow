@@ -227,7 +227,7 @@ export function WorkoutDashboard({ searchQuery = "" }: WorkoutDashboardProps) {
                          placeholder="Ex: Supino Reto"
                          onChange={(e) => updateExerciseName(exIndex, e.target.value)}
                        />
-                       <button onClick={() => removeExercise(exIndex)} className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1">
+                       <button onClick={() => removeExercise(exIndex)} className="text-gray-400 hover:text-red-500 transition-colors opacity-100 lg:opacity-0 lg:group-hover:opacity-100 p-1">
                          <Trash2 size={14} />
                        </button>
                     </div>
@@ -245,14 +245,14 @@ export function WorkoutDashboard({ searchQuery = "" }: WorkoutDashboardProps) {
                           <span className="text-[11px] font-mono text-gray-400">{setIndex + 1}</span>
                           <input 
                             type="number" 
-                            className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg py-2 text-center text-[13px] outline-none" 
+                            className="min-w-0 w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg py-2 text-center text-[13px] outline-none" 
                             value={set.weight || ''} 
                             placeholder="0"
                             onChange={(e) => updateSet(exIndex, setIndex, 'weight', e.target.value)} 
                           />
                           <input 
                             type="number" 
-                            className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg py-2 text-center text-[13px] outline-none" 
+                            className="min-w-0 w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg py-2 text-center text-[13px] outline-none" 
                             value={set.reps || ''} 
                             placeholder="0"
                             onChange={(e) => updateSet(exIndex, setIndex, 'reps', e.target.value)} 
@@ -320,7 +320,7 @@ export function WorkoutDashboard({ searchQuery = "" }: WorkoutDashboardProps) {
                           </div>
                           <button 
                             onClick={() => handleDeleteWorkout(w.id)}
-                            className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1"
+                            className="text-gray-400 hover:text-red-500 transition-colors opacity-100 lg:opacity-0 lg:group-hover:opacity-100 p-1"
                           >
                             <Trash2 size={14} />
                           </button>

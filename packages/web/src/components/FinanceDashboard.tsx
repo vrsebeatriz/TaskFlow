@@ -283,7 +283,7 @@ export function FinanceDashboard({ searchQuery = "" }: FinanceDashboardProps) {
                     </span>
                     <button 
                       onClick={() => handleDeleteTransaction(t.id)}
-                      className="text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-red-500/5"
+                      className="text-gray-300 hover:text-red-500 transition-colors opacity-100 lg:opacity-0 lg:group-hover:opacity-100 p-2 rounded-lg hover:bg-red-500/5"
                     >
                       <Trash2 size={16} />
                     </button>

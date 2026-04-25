@@ -158,7 +158,7 @@ export function CreateTaskModal({
       <div
         className={`
           relative bg-white dark:bg-[#0A0A0A] rounded-xl shadow-2xl
-          max-w-md w-full transform transition-all duration-500
+          max-w-md w-full transform transition-all duration-500 overflow-hidden
           ${isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0"}
           border border-gray-200 dark:border-white/10
         `}
@@ -218,7 +218,7 @@ export function CreateTaskModal({
                 type="button"
                 onClick={nextStep}
                 disabled={!formData.description.trim() || isBusy}
-                className="w-full bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-3 px-4 transition-all duration-200 hover:bg-blue-500 disabled:opacity-50 font-sans"
+                className="w-full bg-blue-600 text-white font-bold tracking-widest sm:tracking-[0.2em] text-[10px] sm:text-[11px] uppercase py-3 px-4 transition-all duration-200 hover:bg-blue-500 disabled:opacity-50 font-sans"
               >
                 Continuar
               </button>
@@ -286,12 +286,12 @@ export function CreateTaskModal({
                 </div>
               </div>
 
-              <div className="flex space-x-3">
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={prevStep}
                   disabled={isBusy}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans"
+                  className="w-full sm:flex-1 py-3 px-2 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 text-[10px] sm:text-[11px] font-bold tracking-widest sm:tracking-[0.2em] uppercase transition-colors font-sans"
                 >
                   Voltar
                 </button>
@@ -299,7 +299,7 @@ export function CreateTaskModal({
                   type="button"
                   onClick={nextStep}
                   disabled={isBusy}
-                  className="flex-1 bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-3 px-4 transition-all hover:bg-blue-500 disabled:opacity-50 font-sans"
+                  className="w-full sm:flex-1 bg-blue-600 text-white font-bold tracking-widest sm:tracking-[0.2em] text-[10px] sm:text-[11px] uppercase py-3 px-2 transition-all hover:bg-blue-500 disabled:opacity-50 font-sans"
                 >
                   Continuar
                 </button>
@@ -314,21 +314,21 @@ export function CreateTaskModal({
                   <Calendar className="h-3 w-3 mr-2" />
                   Data de Vencimento
                 </label>
-                <div className="relative">
+                <div className="relative w-full">
                   <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-500 h-4 w-4" />
                   <input
                     type="date"
                     value={formData.dueDate}
                     onChange={event => setFormData({ ...formData, dueDate: event.target.value })}
                     disabled={isBusy}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans"
+                    className="min-w-0 w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] rounded-md focus:border-blue-500 focus:bg-gray-50 dark:focus:bg-white/[0.04] transition-all duration-200 text-gray-800 dark:text-gray-200 text-[13px] outline-none font-sans appearance-none"
                   />
                 </div>
               </div>
 
               <div className="bg-white dark:bg-white/[0.02] rounded-xl p-4 border border-gray-200 dark:border-white/10">
                 <h4 className="text-[11px] font-mono text-gray-500 dark:text-gray-500 uppercase tracking-widest mb-2">Visualização</h4>
-                <p className="text-gray-800 dark:text-gray-200 text-[13px] font-sans">{formData.description}</p>
+                <p className="text-gray-800 dark:text-gray-200 text-[13px] font-sans break-words">{formData.description}</p>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <span className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 text-[10px] font-mono uppercase tracking-widest">
                     {getPriorityLabel(formData.priority)}
@@ -399,19 +399,19 @@ export function CreateTaskModal({
                 </div>
               )}
 
-              <div className="flex space-x-3">
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={prevStep}
                   disabled={isBusy}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
+                  className="w-full sm:flex-1 py-3 px-2 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 text-[10px] sm:text-[11px] font-bold tracking-widest sm:tracking-[0.2em] uppercase transition-colors font-sans rounded-none"
                 >
                   Voltar
                 </button>
                 <button
                   type="submit"
                   disabled={isBusy}
-                  className="flex-1 bg-blue-600 text-white font-bold tracking-[0.2em] text-[11px] uppercase py-3 px-4 transition-all hover:bg-blue-500 disabled:opacity-50 font-sans rounded-none"
+                  className="w-full sm:flex-1 min-w-0 bg-blue-600 text-white font-bold tracking-widest sm:tracking-[0.2em] text-[10px] sm:text-[11px] uppercase py-3 px-2 transition-all hover:bg-blue-500 disabled:opacity-50 font-sans rounded-none whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                   {isSubmitting ? "..." : isEditMode ? "Salvar Tarefa" : "Criar Tarefa"}
                 </button>
