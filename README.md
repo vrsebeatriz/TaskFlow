@@ -39,13 +39,13 @@ TaskFlow Pro goes beyond a simple to-do list, offering a comprehensive suite of 
 * **Fluid Micro-interactions:** Cinematic layout transitions and drag-and-drop physics powered by **Framer Motion**.
 
 ### Mobile-First & PWA
-* **Progressive Web App (PWA):** Instale o TaskFlow Pro diretamente no seu iPhone ou Android. Funciona como um aplicativo nativo.
-* **Interface Responsiva:** Navegação lateral (Drawer) otimizada para telas pequenas e gestos de toque.
-* **Ações Rápidas:** Todos os modais e botões foram refinados para o uso com uma mão, garantindo que o seu Life OS esteja sempre no seu bolso.
+* **Progressive Web App (PWA):** Install TaskFlow Pro directly on your iPhone or Android. Works just like a native app.
+* **Responsive Interface:** Sidebar navigation (Drawer) optimized for small screens and touch gestures.
+* **Quick Actions:** All modals and buttons have been refined for one-handed use, ensuring your Life OS is always in your pocket.
 
 ### Performance Analytics
-* **Efficiency Engine:** Monitoramento em tempo real do tempo médio de conclusão das tarefas, transformado em uma porcentagem de eficiência.
-* **Visualização de Dados:** Gráficos interativos para produtividade semanal e metas de hábitos que se ajustam dinamicamente.
+* **Efficiency Engine:** Real-time monitoring of average task completion time, transformed into an efficiency percentage.
+* **Data Visualization:** Interactive charts for weekly productivity and habit goals that adjust dynamically.
 
 ---
 
