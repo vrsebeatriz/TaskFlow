@@ -38,12 +38,12 @@ TaskFlow Pro goes beyond a simple to-do list, offering a comprehensive suite of 
 * **Global Ecosystem Search:** Search across all modules—tasks, habits, workouts, diet, and finances—from a single unified search bar.
 * **Fluid Micro-interactions:** Cinematic layout transitions and drag-and-drop physics powered by **Framer Motion**.
 
-### 📱 Mobile-First & PWA
+### Mobile-First & PWA
 * **Progressive Web App (PWA):** Instale o TaskFlow Pro diretamente no seu iPhone ou Android. Funciona como um aplicativo nativo.
 * **Interface Responsiva:** Navegação lateral (Drawer) otimizada para telas pequenas e gestos de toque.
 * **Ações Rápidas:** Todos os modais e botões foram refinados para o uso com uma mão, garantindo que o seu Life OS esteja sempre no seu bolso.
 
-### 📊 Performance Analytics
+### Performance Analytics
 * **Efficiency Engine:** Monitoramento em tempo real do tempo médio de conclusão das tarefas, transformado em uma porcentagem de eficiência.
 * **Visualização de Dados:** Gráficos interativos para produtividade semanal e metas de hábitos que se ajustam dinamicamente.
 
@@ -53,19 +53,19 @@ TaskFlow Pro goes beyond a simple to-do list, offering a comprehensive suite of 
 
 The **Life OS** expansion transforms TaskFlow Pro into a central command center for your personal development.
 
-### 🛡️ Productivity & Work
+### Productivity & Work
 * **Kanban Board:** High-performance task management with real-time status updates.
 * **Pomodoro Engine:** Immersive focus timer with state-of-the-art UI for deep work sessions.
 
-### 🏋️ Health & Performance
+### Health & Performance
 * **Workout Dashboard:** Track exercises, sets, and progress over time. Persistent history keeps your evolution visible.
 * **Diet Tracker:** Log daily meals, monitor macro-nutrients (Protein, Carbs, Fats), and keep a historical log of your nutrition.
 
-### 📈 Personal Finance & Goals
+### Personal Finance & Goals
 * **Finance Dashboard:** Complete transaction management (Income/Expense) with **AI-Powered Financial Analysis** via Google Gemini.
 * **Goals Overview:** Define long-term objectives with a visual progress simulator to keep you motivated.
 
-### 🔄 Habits & Consistency
+### Habits & Consistency
 * **Habit Tracker:** Build and maintain discipline with a visual daily check-list and performance charts.
 
 ---
