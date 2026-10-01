@@ -47,16 +47,29 @@ const db = new Low(adapter, defaultData);
 await db.read();
 if (!db.data) {
   db.data = defaultData;
-  await db.write();
-} else {
-  db.data.habits = db.data.habits || [];
-  db.data.habitLogs = db.data.habitLogs || [];
-  db.data.goals = db.data.goals || [];
-  db.data.transactions = db.data.transactions || [];
-  db.data.workouts = db.data.workouts || [];
-  db.data.meals = db.data.meals || [];
-  await db.write();
 }
+
+// Garante que todas as propriedades existam
+db.data.habits = db.data.habits || [];
+db.data.habitLogs = db.data.habitLogs || [];
+db.data.goals = db.data.goals || [];
+db.data.transactions = db.data.transactions || [];
+db.data.workouts = db.data.workouts || [];
+db.data.meals = db.data.meals || [];
+db.data.users = db.data.users || [];
+
+// Cria um usuário admin padrão se não houver usuários
+if (db.data.users.length === 0) {
+  db.data.users.push({
+    id: db.data.idCounter++,
+    name: 'Administrador',
+    email: 'admin@admin.com',
+    password: bcrypt.hashSync('admin123', 10),
+    createdAt: new Date().toISOString()
+  });
+}
+
+await db.write();
 
 // Middleware para verificar o Token JWT [CITE: 1]
 const authenticateToken = (req, res, next) => {

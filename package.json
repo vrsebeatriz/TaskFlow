@@ -2,7 +2,7 @@
   "name": "task-manager-pro",
   "type": "module",
   "scripts": {
-    "dev": "cd packages/web && npm run dev",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
     "build": "cd packages/web && npm run build",
     "preview": "cd packages/web && npm run preview",
     "start": "cd packages/api && node server.js",
@@ -13,7 +13,8 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.1.0"
+    "@vitejs/plugin-react": "^5.1.0",
+    "concurrently": "^10.0.5"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
